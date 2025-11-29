@@ -28,6 +28,9 @@ public class Category {
         this.name = name;
         this.description = description;
         this.parentCategory = parentCategory;
+        if (parentCategory != null) {
+            parentCategory.AddSubcategory(this);
+        }
 
         this.subCategories = new ArrayList<>();
     }

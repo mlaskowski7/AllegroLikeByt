@@ -51,7 +51,7 @@ public class CategoryTest {
         // given
         var description = "Valid description";
 
-        // when & then
+        // then
         var exception = assertThrows(
             IllegalArgumentException.class,
             () -> new Category(invalidName, description, null)
@@ -66,7 +66,7 @@ public class CategoryTest {
         // given
         var name = "Valid name";
 
-        // when & then
+        // then
         var exception = assertThrows(
             IllegalArgumentException.class,
             () -> new Category(name, invalidDescription, null)
@@ -74,7 +74,6 @@ public class CategoryTest {
         assertEquals("Description cannot be null or empty", exception.getMessage());
     }
 
-    // Setter Tests - Name
 
     @Test
     void setName_validName_nameUpdated() {
@@ -97,7 +96,7 @@ public class CategoryTest {
         var category = new Category("Original", "Description", null);
         var originalName = category.getName();
 
-        // when & then
+        // then
         var exception = assertThrows(
             IllegalArgumentException.class,
             () -> category.setName(invalidName)
@@ -106,7 +105,6 @@ public class CategoryTest {
         assertEquals(originalName, category.getName());
     }
 
-    // Setter Tests - Description
 
     @Test
     void setDescription_validDescription_descriptionUpdated() {
@@ -129,7 +127,7 @@ public class CategoryTest {
         var category = new Category("Name", "Original description", null);
         var originalDescription = category.getDescription();
 
-        // when & then
+        // then
         var exception = assertThrows(
             IllegalArgumentException.class,
             () -> category.setDescription(invalidDescription)
@@ -138,7 +136,6 @@ public class CategoryTest {
         assertEquals(originalDescription, category.getDescription());
     }
 
-    // Setter Tests - Parent Category
 
     @Test
     void setParentCategory_validParent_parentUpdated() {
@@ -166,7 +163,6 @@ public class CategoryTest {
         assertNull(category.getParentCategory());
     }
 
-    // AddSubcategory Tests
 
     @Test
     void addSubcategory_validSubcategory_subcategoryAdded() {
@@ -211,7 +207,7 @@ public class CategoryTest {
         // given
         var parentCategory = new Category("Parent", "Parent description", null);
 
-        // when & then
+        // then
         var exception = assertThrows(
             IllegalArgumentException.class,
             () -> parentCategory.AddSubcategory(null)
@@ -225,7 +221,7 @@ public class CategoryTest {
         // given
         var category = new Category("Category", "Description", null);
 
-        // when & then
+        // then
         var exception = assertThrows(
             IllegalArgumentException.class,
             () -> category.AddSubcategory(category)
@@ -250,7 +246,6 @@ public class CategoryTest {
         assertTrue(newParent.getSubCategories().contains(subcategory));
     }
 
-    // Setter Tests - SubCategories
 
     @Test
     void setSubCategories_validList_subcategoriesUpdated() {
