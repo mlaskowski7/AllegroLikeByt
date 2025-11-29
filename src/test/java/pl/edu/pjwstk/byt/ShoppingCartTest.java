@@ -43,7 +43,7 @@ public class ShoppingCartTest {
 
     @Test
     void ctor_nullCreatedDate_illegalArgumentExceptionThrown() {
-        // given & when & then
+        // then
         var exception = assertThrows(
             IllegalArgumentException.class,
             () -> new ShoppingCart(null)
@@ -56,7 +56,7 @@ public class ShoppingCartTest {
         // given
         var futureDate = LocalDateTime.now().plusDays(1);
 
-        // when & then
+        // then
         var exception = assertThrows(
             IllegalArgumentException.class,
             () -> new ShoppingCart(futureDate)
@@ -80,7 +80,7 @@ public class ShoppingCartTest {
 
     @Test
     void getMaxCartItems_always_returns50() {
-        // given & when
+        // when
         var maxItems = ShoppingCart.getMaxCartItems();
 
         // then
@@ -298,7 +298,7 @@ public class ShoppingCartTest {
         var createdDate = LocalDateTime.now().minusDays(1);
         var shoppingCart = new ShoppingCart(createdDate);
 
-        // when & then
+        // then
         var exception = assertThrows(
             IllegalArgumentException.class,
             () -> shoppingCart.updateCart(null, 1)
