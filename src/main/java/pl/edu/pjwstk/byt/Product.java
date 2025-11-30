@@ -8,8 +8,8 @@ public class Product {
     private double price;
     private int stockQuantity;
     private List<String> images; // multi value attribute [1..*]
-    private List<Integer> rating; // list of ratings
-    private double avgRating; // /avgRating (derived)
+    private List<Integer> rating;
+    private double avgRating; // derived attribute
 
 
     private static List<Product> extent = new ArrayList<>();
@@ -31,8 +31,9 @@ public class Product {
     }
 
     public void updateStock(int change) {
-        if (stockQuantity + change < 0)
+        if (stockQuantity + change < 0) {
             throw new IllegalArgumentException("Not enough stock");
+        }
         stockQuantity += change;
     }
 
@@ -47,8 +48,9 @@ public class Product {
     }
 
     public void addReview(int stars) {
-        if (stars < 1 || stars > 5)
-            throw new IllegalArgumentException("Rating must be between 1 and 5");
+        if (stars < 1 || stars > 5) {
+            throw new IllegalArgumentException("Stars must be between 1 and 5");
+        }
         rating.add(stars);
         calculateAverageRating();
     }
@@ -64,8 +66,13 @@ public class Product {
 
     public static List<Product> getExtent() { return extent; }
 
+    public List<String> getImages() {
+        return new ArrayList<>(images);
+    }
+
+
     @Override
     public String toString() {
-        return name + " | Price: " + price + " | Avg Rating: " + avgRating;
+        return name + " Price: " + price + " Avg Rating: " + avgRating;
     }
 }
