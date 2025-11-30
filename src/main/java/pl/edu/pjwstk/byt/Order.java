@@ -13,7 +13,7 @@ public class Order implements Serializable {
     private List<Product> items; // Order consists of (1..*) Products
 
     public Order(LocalDateTime orderDate, String status) {
-        if (orderDate == null) throw new IllegalArgumentException("Order date cannot be null");
+        if (orderDate == null) throw new IllegalArgumentException("Order date canot be null");
         if (orderDate.isAfter(LocalDateTime.now())) throw new IllegalArgumentException("Order date cannot be in the future");
         if (status == null || status.isBlank()) throw new IllegalArgumentException("Status cannot be empty");
 
@@ -45,14 +45,16 @@ public class Order implements Serializable {
     }
 
     public void changeOrderStatus(String newStatus) {
-        if (newStatus == null || newStatus.isBlank())
+        if (newStatus == null || newStatus.isBlank()) {
             throw new IllegalArgumentException("Invalid status");
+        }
         status = newStatus;
     }
 
     public void checkPendingOrders() {
-        if (status.equalsIgnoreCase("pending"))
+        if (status.equalsIgnoreCase("pending")) {
             System.out.println("Order is still pending...");
+        }
     }
 
     @Override
