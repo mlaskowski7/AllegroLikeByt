@@ -1,8 +1,13 @@
 package pl.edu.pjwstk.byt;
 
+import java.io.*;
 import java.util.*;
 
-public class Product {
+public class Product implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private static final String EXTENT_FILE = "Product_extent.ser";
+    private static List<Product> extent = new ArrayList<>();
+
     private String name; // basic attribute
     private String description;
     private double price;
@@ -10,9 +15,6 @@ public class Product {
     private List<String> images; // multi value attribute [1..*]
     private List<Integer> rating;
     private double avgRating; // derived attribute
-
-
-    private static List<Product> extent = new ArrayList<>();
 
     public Product(String name, String description, double price, int stockQuantity, List<String> images) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException("Name cannot be empty");
@@ -64,7 +66,22 @@ public class Product {
     public double getAvgRating() { return avgRating; }
 
 
-    public static List<Product> getExtent() { return extent; }
+    public static List<Product> getExtent() {
+        return new ArrayList<>(extent);
+    }
+
+    public static void saveExtent() throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(EXTENT_FILE))) {
+            oos.writeObject(extent);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void loadExtent() throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(EXTENT_FILE))) {
+            extent = (List<Product>) ois.readObject();
+        }
+    }
 
     public List<String> getImages() {
         return new ArrayList<>(images);
