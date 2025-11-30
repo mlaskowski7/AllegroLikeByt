@@ -45,9 +45,9 @@ public class ShoppingCartExtentTest {
     @Test
     void getExtent_afterCreatingShoppingCarts_returnsAllShoppingCarts() {
         // given
-        var cart1 = new ShoppingCart(LocalDateTime.now().minusDays(1));
-        var cart2 = new ShoppingCart(LocalDateTime.now().minusDays(2));
-        var cart3 = new ShoppingCart(LocalDateTime.now().minusDays(3));
+        var cart1 = new ShoppingCart();
+        var cart2 = new ShoppingCart();
+        var cart3 = new ShoppingCart();
 
         // when
         var extent = ShoppingCart.getExtent();
@@ -72,7 +72,7 @@ public class ShoppingCartExtentTest {
     @Test
     void getExtent_returnsCopy_notOriginalList() {
         // given
-        var cart = new ShoppingCart(LocalDateTime.now().minusDays(1));
+        var cart = new ShoppingCart();
         var extent1 = ShoppingCart.getExtent();
         int originalSize = extent1.size();
 
@@ -88,8 +88,8 @@ public class ShoppingCartExtentTest {
     @Test
     void saveExtent_afterCreatingShoppingCarts_savesToFile() throws IOException {
         // given
-        var cart1 = new ShoppingCart(LocalDateTime.now().minusDays(1));
-        var cart2 = new ShoppingCart(LocalDateTime.now().minusDays(2));
+        var cart1 = new ShoppingCart();
+        var cart2 = new ShoppingCart();
 
         // when
         ShoppingCart.saveExtent();
@@ -103,10 +103,8 @@ public class ShoppingCartExtentTest {
     @Test
     void loadExtent_afterSaving_loadsAllShoppingCarts() throws Exception {
         // given
-        var createdDate1 = LocalDateTime.now().minusDays(1);
-        var createdDate2 = LocalDateTime.now().minusDays(2);
-        var cart1 = new ShoppingCart(createdDate1);
-        var cart2 = new ShoppingCart(createdDate2);
+        var cart1 = new ShoppingCart();
+        var cart2 = new ShoppingCart();
         ShoppingCart.saveExtent();
 
         clearExtent();
@@ -130,8 +128,7 @@ public class ShoppingCartExtentTest {
     @Test
     void saveAndLoadExtent_preservesShoppingCartAttributes() throws Exception {
         // given
-        var createdDate = LocalDateTime.now().minusDays(5);
-        var cart = new ShoppingCart(createdDate);
+        var cart = new ShoppingCart();
         var product = new Product("Test Product", "Test Description", 15.5, 20, List.of("test.jpg"));
         cart.updateCart(product, 2);
         ShoppingCart.saveExtent();

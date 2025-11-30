@@ -29,7 +29,7 @@ public class Order implements Serializable {
     }
 
 
-    public void setStatus(OrderStatus status) {
+    public void changeOrderStatus(OrderStatus status) {
         if (status == null) {
             throw new IllegalArgumentException("Order status cannot be null");
         }

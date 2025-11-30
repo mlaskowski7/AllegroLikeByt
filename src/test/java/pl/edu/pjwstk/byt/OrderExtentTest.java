@@ -45,9 +45,9 @@ public class OrderExtentTest {
     @Test
     void getExtent_afterCreatingOrders_returnsAllOrders() {
         // given
-        var order1 = new Order(LocalDateTime.now().minusDays(1), "pending");
-        var order2 = new Order(LocalDateTime.now().minusDays(2), "completed");
-        var order3 = new Order(LocalDateTime.now().minusDays(3), "shipped");
+        var order1 = new Order(LocalDateTime.now().minusDays(1), OrderStatus.PAYMENT_PENDING);
+        var order2 = new Order(LocalDateTime.now().minusDays(2), OrderStatus.COMPLETE);
+        var order3 = new Order(LocalDateTime.now().minusDays(3), OrderStatus.SHIPPED);
 
         // when
         var extent = Order.getExtent();
@@ -72,7 +72,7 @@ public class OrderExtentTest {
     @Test
     void getExtent_returnsCopy_notOriginalList() {
         // given
-        var order = new Order(LocalDateTime.now().minusDays(1), "pending");
+        var order = new Order(LocalDateTime.now().minusDays(1), OrderStatus.PAYMENT_PENDING);
         var extent1 = Order.getExtent();
         int originalSize = extent1.size();
 
@@ -88,8 +88,8 @@ public class OrderExtentTest {
     @Test
     void saveExtent_afterCreatingOrders_savesToFile() throws IOException {
         // given
-        var order1 = new Order(LocalDateTime.now().minusDays(1), "pending");
-        var order2 = new Order(LocalDateTime.now().minusDays(2), "completed");
+        var order1 = new Order(LocalDateTime.now().minusDays(1), OrderStatus.PAYMENT_PENDING);
+        var order2 = new Order(LocalDateTime.now().minusDays(2), OrderStatus.COMPLETE);
 
         // when
         Order.saveExtent();
@@ -103,8 +103,8 @@ public class OrderExtentTest {
     @Test
     void loadExtent_afterSaving_loadsAllOrders() throws Exception {
         // given
-        var order1 = new Order(LocalDateTime.now().minusDays(1), "pending");
-        var order2 = new Order(LocalDateTime.now().minusDays(2), "completed");
+        var order1 = new Order(LocalDateTime.now().minusDays(1), OrderStatus.PAYMENT_PENDING);
+        var order2 = new Order(LocalDateTime.now().minusDays(2), OrderStatus.COMPLETE);
         Order.saveExtent();
 
         clearExtent();
@@ -116,7 +116,7 @@ public class OrderExtentTest {
         // then
         assertEquals(2, loadedExtent.size());
         assertEquals("pending", loadedExtent.get(0).getStatus());
-        assertEquals("completed", loadedExtent.get(1).getStatus());
+        assertEquals(OrderStatus.COMPLETE, loadedExtent.get(1).getStatus());
     }
 
     @Test
@@ -129,8 +129,8 @@ public class OrderExtentTest {
     void saveAndLoadExtent_preservesOrderAttributes() throws Exception {
         // given
         var orderDate = LocalDateTime.now().minusDays(5);
-        var order = new Order(orderDate, "pending");
-        order.changeOrderStatus("completed");
+        var order = new Order(orderDate, OrderStatus.PAYMENT_PENDING);
+        order.changeOrderStatus(OrderStatus.COMPLETE);
         var product = new Product("Test Product", "Test Description", 15.5, 20, List.of("test.jpg"));
         order.addItem(product);
         order.calculateTotal();
@@ -145,7 +145,7 @@ public class OrderExtentTest {
         // then
         assertEquals(1, loadedExtent.size());
         var loadedOrder = loadedExtent.get(0);
-        assertEquals("completed", loadedOrder.getStatus());
+        assertEquals(OrderStatus.COMPLETE, loadedOrder.getStatus());
         assertEquals(1, loadedOrder.getItems().size());
     }
 }
