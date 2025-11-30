@@ -196,7 +196,6 @@ public class ShoppingCartTest {
         var shoppingCart = new ShoppingCart();
         var product = createTestProduct();
 
-        // fill the cart up to the maximum
         for (int i = 0; i < ShoppingCart.MAX_CART_ITEMS; i++) {
             var added = shoppingCart.updateCart(product, 1);
             assertTrue(added);
@@ -204,12 +203,11 @@ public class ShoppingCartTest {
 
         assertEquals(ShoppingCart.MAX_CART_ITEMS, shoppingCart.getCartItems().size());
 
-        // when - try to add one more item which should exceed the limit
+        // when
         var result = shoppingCart.updateCart(product, 1);
 
         // then
         assertFalse(result);
-        // size remains unchanged
         assertEquals(ShoppingCart.MAX_CART_ITEMS, shoppingCart.getCartItems().size());
     }
 
