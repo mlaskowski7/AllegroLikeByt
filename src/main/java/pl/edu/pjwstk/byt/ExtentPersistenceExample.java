@@ -126,12 +126,12 @@ public class ExtentPersistenceExample {
 
         // Create orders
         System.out.println("Creating orders...");
-        var order1 = new Order(LocalDateTime.now().minusDays(5), "pending");
+        var order1 = new Order(LocalDateTime.now().minusDays(5), OrderStatus.PAYMENT_PENDING);
         order1.addItem(product1);
         order1.addItem(product2);
         order1.calculateTotal();
 
-        var order2 = new Order(LocalDateTime.now().minusDays(2), "completed");
+        var order2 = new Order(LocalDateTime.now().minusDays(2), OrderStatus.COMPLETE);
         order2.addItem(product1);
         order2.calculateTotal();
 

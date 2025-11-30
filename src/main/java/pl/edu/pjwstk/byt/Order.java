@@ -45,6 +45,13 @@ public class Order implements Serializable {
         return totalAmount;
     }
 
+    public void addItem(Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Cannot add a null product");
+        }
+        items.add(product);
+    }
+
     public List<Product> getItems() {
         return new ArrayList<>(items);
     }
