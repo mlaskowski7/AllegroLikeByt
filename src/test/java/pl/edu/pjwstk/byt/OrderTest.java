@@ -9,14 +9,14 @@ public class OrderTest {
     // Complex attribute (orderDate) TESTS
     @Test
     void shouldCreateOrderWithValidDate() {
-        var order = new Order(LocalDateTime.now().minusDays(1), "pending");
+        var order = new Order(LocalDateTime.now().minusDays(1), OrderStatus.PAYMENT_PENDING);
         assertNotNull(order);
     }
 
     @Test
     void shouldThrowExceptionWhenOrderDateIsNull() {
         assertThrows(IllegalArgumentException.class, () ->
-                new Order(null, "pending")
+                new Order(null, OrderStatus.PAYMENT_PENDING)
         );
     }
 
@@ -24,14 +24,14 @@ public class OrderTest {
     void shouldThrowExceptionWhenOrderDateIsInFuture() {
         var futureDate = LocalDateTime.now().plusDays(1);
         assertThrows(IllegalArgumentException.class, () ->
-                new Order(futureDate, "pending")
+                new Order(futureDate, OrderStatus.PAYMENT_PENDING)
         );
     }
 
     @Test
     void shouldSetStatusCorrectlyOnCreation() {
         var now = LocalDateTime.now();
-        var order = new Order(now, "completed");
-        assertEquals("completed", order.getStatus());
+        var order = new Order(now, OrderStatus.COMPLETE);
+        assertEquals(OrderStatus.COMPLETE, order.getStatus());
     }
 }
