@@ -4,182 +4,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShoppingCartTest {
 
     @Test
-    void ctor_validCreatedDate_shoppingCartCreated() {
+    void getCartItems_afterAddingItems_unmodifiableSetOfItems() {
         // given
-        var createdDate = LocalDateTime.now().minusDays(1);
-
-        // when
-        var shoppingCart = new ShoppingCart(createdDate);
-
-        // then
-        assertNotNull(shoppingCart);
-        assertEquals(createdDate, shoppingCart.getCreatedDate());
-        assertEquals(createdDate, shoppingCart.getLastUpdated());
-        assertNotNull(shoppingCart.getCartItems());
-        assertTrue(shoppingCart.getCartItems().isEmpty());
-    }
-
-    @Test
-    void ctor_createdDateNow_shoppingCartCreated() {
-        // given
-        var createdDate = LocalDateTime.now();
-
-        // when
-        var shoppingCart = new ShoppingCart(createdDate);
-
-        // then
-        assertNotNull(shoppingCart);
-        assertEquals(createdDate, shoppingCart.getCreatedDate());
-        assertEquals(createdDate, shoppingCart.getLastUpdated());
-    }
-
-    @Test
-    void ctor_nullCreatedDate_illegalArgumentExceptionThrown() {
-        // then
-        var exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> new ShoppingCart(null)
-        );
-        assertEquals("Creation date cannot be null.", exception.getMessage());
-    }
-
-    @Test
-    void ctor_futureCreatedDate_illegalArgumentExceptionThrown() {
-        // given
-        var futureDate = LocalDateTime.now().plusDays(1);
-
-        // then
-        var exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> new ShoppingCart(futureDate)
-        );
-        assertEquals("Creation date cannot be in the future.", exception.getMessage());
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {1, 5, 10, 30, 365})
-    void ctor_variousPastDates_shoppingCartCreated(int daysAgo) {
-        // given
-        var createdDate = LocalDateTime.now().minusDays(daysAgo);
-
-        // when
-        var shoppingCart = new ShoppingCart(createdDate);
-
-        // then
-        assertNotNull(shoppingCart);
-        assertEquals(createdDate, shoppingCart.getCreatedDate());
-    }
-
-    @Test
-    void getMaxCartItems_always_returns50() {
-        // when
-        var maxItems = ShoppingCart.getMaxCartItems();
-
-        // then
-        assertEquals(50, maxItems);
-    }
-
-    @Test
-    void setLastUpdated_validDate_lastUpdatedUpdated() {
-        // given
-        var createdDate = LocalDateTime.now().minusDays(5);
-        var shoppingCart = new ShoppingCart(createdDate);
-        var newLastUpdated = LocalDateTime.now().minusDays(1);
-
-        // when
-        shoppingCart.setLastUpdated(newLastUpdated);
-
-        // then
-        assertEquals(newLastUpdated, shoppingCart.getLastUpdated());
-    }
-
-    @Test
-    void setLastUpdated_dateAfterCreation_lastUpdatedUpdated() {
-        // given
-        var createdDate = LocalDateTime.now().minusDays(10);
-        var shoppingCart = new ShoppingCart(createdDate);
-        var newLastUpdated = LocalDateTime.now().minusDays(2);
-
-        // when
-        shoppingCart.setLastUpdated(newLastUpdated);
-
-        // then
-        assertEquals(newLastUpdated, shoppingCart.getLastUpdated());
-    }
-
-    @Test
-    void setLastUpdated_nullDate_illegalArgumentExceptionThrown() {
-        // given
-        var createdDate = LocalDateTime.now().minusDays(5);
-        var shoppingCart = new ShoppingCart(createdDate);
-        var originalLastUpdated = shoppingCart.getLastUpdated();
-
-        // then
-        var exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> shoppingCart.setLastUpdated(null)
-        );
-        assertEquals("Last updated date cannot be null.", exception.getMessage());
-        assertEquals(originalLastUpdated, shoppingCart.getLastUpdated());
-    }
-
-    @Test
-    void setLastUpdated_dateBeforeCreation_illegalArgumentExceptionThrown() {
-        // given
-        var createdDate = LocalDateTime.now().minusDays(5);
-        var shoppingCart = new ShoppingCart(createdDate);
-        var dateBeforeCreation = createdDate.minusDays(1);
-        var originalLastUpdated = shoppingCart.getLastUpdated();
-
-        // then
-        var exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> shoppingCart.setLastUpdated(dateBeforeCreation)
-        );
-        assertEquals("Last updated date cannot be before creation date.", exception.getMessage());
-        assertEquals(originalLastUpdated, shoppingCart.getLastUpdated());
-    }
-
-    @Test
-    void setLastUpdated_sameAsCreationDate_lastUpdatedUpdated() {
-        // given
-        var createdDate = LocalDateTime.now().minusDays(5);
-        var shoppingCart = new ShoppingCart(createdDate);
-
-        // when
-        shoppingCart.setLastUpdated(createdDate);
-
-        // then
-        assertEquals(createdDate, shoppingCart.getLastUpdated());
-    }
-
-    @Test
-    void getCartItems_emptyCart_returnsEmptySet() {
-        // given
-        var createdDate = LocalDateTime.now().minusDays(1);
-        var shoppingCart = new ShoppingCart(createdDate);
-
-        // when
-        var cartItems = shoppingCart.getCartItems();
-
-        // then
-        assertNotNull(cartItems);
-        assertTrue(cartItems.isEmpty());
-    }
-
-    @Test
-    void getCartItems_afterAddingItems_returnsUnmodifiableSet() {
-        // given
-        var createdDate = LocalDateTime.now().minusDays(1);
-        var shoppingCart = new ShoppingCart(createdDate);
+        var shoppingCart = new ShoppingCart();
         var product = createTestProduct();
         shoppingCart.updateCart(product, 1);
 
@@ -188,31 +26,14 @@ public class ShoppingCartTest {
 
         // then
         assertNotNull(cartItems);
-        assertFalse(cartItems.isEmpty());
+        assertEquals(1, cartItems.size());
         assertThrows(UnsupportedOperationException.class, cartItems::clear);
     }
 
     @Test
-    void getCartItems_withItems_returnsCorrectSize() {
+    void clearCart_emptyCart_cartRemainsEmpty() {
         // given
-        var createdDate = LocalDateTime.now().minusDays(1);
-        var shoppingCart = new ShoppingCart(createdDate);
-        var product1 = new Product("Product 1", "Description 1", 10.0, 5, List.of("image1.jpg"));
-        var product2 = new Product("Product 2", "Description 2", 20.0, 10, List.of("image2.jpg"));
-
-        // when
-        shoppingCart.updateCart(product1, 1);
-        shoppingCart.updateCart(product2, 2);
-
-        // then
-        assertEquals(2, shoppingCart.getCartItems().size());
-    }
-
-    @Test
-    void clearCart_emptyCart_remainsEmpty() {
-        // given
-        var createdDate = LocalDateTime.now().minusDays(1);
-        var shoppingCart = new ShoppingCart(createdDate);
+        var shoppingCart = new ShoppingCart();
 
         // when
         shoppingCart.clearCart();
@@ -224,8 +45,7 @@ public class ShoppingCartTest {
     @Test
     void clearCart_cartWithItems_becomesEmpty() {
         // given
-        var createdDate = LocalDateTime.now().minusDays(1);
-        var shoppingCart = new ShoppingCart(createdDate);
+        var shoppingCart = new ShoppingCart();
         var product = createTestProduct();
         shoppingCart.updateCart(product, 1);
 
@@ -239,8 +59,7 @@ public class ShoppingCartTest {
     @Test
     void clearCart_updatesLastUpdatedDate() {
         // given
-        var createdDate = LocalDateTime.now().minusDays(5);
-        var shoppingCart = new ShoppingCart(createdDate);
+        var shoppingCart = new ShoppingCart();
         var product = createTestProduct();
         shoppingCart.updateCart(product, 1);
         var lastUpdatedBeforeClear = shoppingCart.getLastUpdated();
@@ -262,8 +81,7 @@ public class ShoppingCartTest {
     @Test
     void clearCart_multipleItems_removesAll() {
         // given
-        var createdDate = LocalDateTime.now().minusDays(1);
-        var shoppingCart = new ShoppingCart(createdDate);
+        var shoppingCart = new ShoppingCart();
         var product1 = new Product("Product 1", "Description 1", 10.0, 5, List.of("image1.jpg"));
         var product2 = new Product("Product 2", "Description 2", 20.0, 10, List.of("image2.jpg"));
         var product3 = new Product("Product 3", "Description 3", 30.0, 15, List.of("image3.jpg"));
@@ -281,8 +99,7 @@ public class ShoppingCartTest {
     @Test
     void updateCart_validProduct_productAdded() {
         // given
-        var createdDate = LocalDateTime.now().minusDays(1);
-        var shoppingCart = new ShoppingCart(createdDate);
+        var shoppingCart = new ShoppingCart();
         var product = createTestProduct();
 
         // when
@@ -295,8 +112,7 @@ public class ShoppingCartTest {
     @Test
     void updateCart_nullProduct_illegalArgumentExceptionThrown() {
         // given
-        var createdDate = LocalDateTime.now().minusDays(1);
-        var shoppingCart = new ShoppingCart(createdDate);
+        var shoppingCart = new ShoppingCart();
 
         // then
         var exception = assertThrows(
@@ -310,8 +126,7 @@ public class ShoppingCartTest {
     @Test
     void updateCart_multipleProducts_allProductsAdded() {
         // given
-        var createdDate = LocalDateTime.now().minusDays(1);
-        var shoppingCart = new ShoppingCart(createdDate);
+        var shoppingCart = new ShoppingCart();
         var product1 = new Product("Product 1", "Description 1", 10.0, 5, List.of("image1.jpg"));
         var product2 = new Product("Product 2", "Description 2", 20.0, 10, List.of("image2.jpg"));
         var product3 = new Product("Product 3", "Description 3", 30.0, 15, List.of("image3.jpg"));
@@ -328,8 +143,7 @@ public class ShoppingCartTest {
     @Test
     void updateCart_updatesLastUpdatedDate() {
         // given
-        var createdDate = LocalDateTime.now().minusDays(5);
-        var shoppingCart = new ShoppingCart(createdDate);
+        var shoppingCart = new ShoppingCart();
         var product = createTestProduct();
         var originalLastUpdated = shoppingCart.getLastUpdated();
 
@@ -350,8 +164,7 @@ public class ShoppingCartTest {
     @ValueSource(ints = {1, 5, 10, 20})
     void updateCart_variousQuantities_productAdded(int quantity) {
         // given
-        var createdDate = LocalDateTime.now().minusDays(1);
-        var shoppingCart = new ShoppingCart(createdDate);
+        var shoppingCart = new ShoppingCart();
         var product = createTestProduct();
 
         // when
@@ -364,8 +177,7 @@ public class ShoppingCartTest {
     @Test
     void updateCart_afterClear_productAdded() {
         // given
-        var createdDate = LocalDateTime.now().minusDays(1);
-        var shoppingCart = new ShoppingCart(createdDate);
+        var shoppingCart = new ShoppingCart();
         var product1 = createTestProduct();
         var product2 = new Product("Product 2", "Description 2", 20.0, 10, List.of("image2.jpg"));
         shoppingCart.updateCart(product1, 1);
@@ -376,6 +188,29 @@ public class ShoppingCartTest {
 
         // then
         assertEquals(1, shoppingCart.getCartItems().size());
+    }
+
+    @Test
+    void updateCart_whenMaxItemsExceeded_returnsFalseAndDoesNotAdd() {
+        // given
+        var shoppingCart = new ShoppingCart();
+        var product = createTestProduct();
+
+        // fill the cart up to the maximum
+        for (int i = 0; i < ShoppingCart.MAX_CART_ITEMS; i++) {
+            var added = shoppingCart.updateCart(product, 1);
+            assertTrue(added);
+        }
+
+        assertEquals(ShoppingCart.MAX_CART_ITEMS, shoppingCart.getCartItems().size());
+
+        // when - try to add one more item which should exceed the limit
+        var result = shoppingCart.updateCart(product, 1);
+
+        // then
+        assertFalse(result);
+        // size remains unchanged
+        assertEquals(ShoppingCart.MAX_CART_ITEMS, shoppingCart.getCartItems().size());
     }
 
     private Product createTestProduct() {
