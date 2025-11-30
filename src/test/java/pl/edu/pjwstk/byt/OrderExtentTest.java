@@ -115,7 +115,7 @@ public class OrderExtentTest {
 
         // then
         assertEquals(2, loadedExtent.size());
-        assertEquals("pending", loadedExtent.get(0).getStatus());
+        assertEquals(OrderStatus.PAYMENT_PENDING, loadedExtent.get(0).getStatus());
         assertEquals(OrderStatus.COMPLETE, loadedExtent.get(1).getStatus());
     }
 
