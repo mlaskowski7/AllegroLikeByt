@@ -1,11 +1,18 @@
 package pl.edu.pjwstk.byt;
 
+import java.io.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-public class ShoppingCart {
+public class ShoppingCart implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    private static final String EXTENT_FILE = "ShoppingCart_extent.ser";
+    private static List<ShoppingCart> extent = new ArrayList<>();
 
     private static final int MAX_CART_ITEMS = 50;
 
@@ -16,6 +23,7 @@ public class ShoppingCart {
     public ShoppingCart(LocalDateTime createdDate) {
         setCreatedDate(createdDate);
         setLastUpdated(createdDate);
+        extent.add(this);
     }
 
     public static int getMaxCartItems() {
@@ -67,5 +75,28 @@ public class ShoppingCart {
         var cartItem = new CartItem(1, product);
         cartItems.add(cartItem);
         setLastUpdated(LocalDateTime.now());
+    }
+
+    // Class extent methods
+    public static List<ShoppingCart> getExtent() {
+        return new ArrayList<>(extent);
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    // Class extent persistence methods
+    public static void saveExtent() throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(EXTENT_FILE))) {
+            oos.writeObject(extent);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void loadExtent() throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(EXTENT_FILE))) {
+            extent = (List<ShoppingCart>) ois.readObject();
+        }
     }
 }

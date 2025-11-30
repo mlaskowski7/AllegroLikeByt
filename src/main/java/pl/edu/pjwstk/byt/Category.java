@@ -1,13 +1,16 @@
 package pl.edu.pjwstk.byt;
 
-import pl.edu.pjwstk.byt.utils.StringUtils;
-
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static pl.edu.pjwstk.byt.utils.StringUtils.isNullOrBlank;
 
-public class Category {
+public class Category implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    private static final String EXTENT_FILE = "Category_extent.ser";
+    private static List<Category> extent = new ArrayList<>();
 
     private String name;
 
@@ -33,6 +36,7 @@ public class Category {
         }
 
         this.subCategories = new ArrayList<>();
+        extent.add(this);
     }
 
     public void AddSubcategory(Category subcategory) {
@@ -83,5 +87,28 @@ public class Category {
 
     public void setSubCategories(List<Category> subCategories) {
         this.subCategories = subCategories;
+    }
+
+    // Class extent methods
+    public static List<Category> getExtent() {
+        return new ArrayList<>(extent);
+    }
+
+    public static void clearExtent() {
+        extent.clear();
+    }
+
+    // Class extent persistence methods
+    public static void saveExtent() throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(EXTENT_FILE))) {
+            oos.writeObject(extent);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void loadExtent() throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(EXTENT_FILE))) {
+            extent = (List<Category>) ois.readObject();
+        }
     }
 }
