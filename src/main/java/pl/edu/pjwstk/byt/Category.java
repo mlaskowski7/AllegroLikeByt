@@ -89,16 +89,10 @@ public class Category implements Serializable {
         this.subCategories = subCategories;
     }
 
-    // Class extent methods
     public static List<Category> getExtent() {
         return new ArrayList<>(extent);
     }
 
-    public static void clearExtent() {
-        extent.clear();
-    }
-
-    // Class extent persistence methods
     public static void saveExtent() throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(EXTENT_FILE))) {
             oos.writeObject(extent);

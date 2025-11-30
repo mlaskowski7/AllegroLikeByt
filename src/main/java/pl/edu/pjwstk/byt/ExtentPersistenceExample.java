@@ -29,9 +29,6 @@ public class ExtentPersistenceExample {
     private static void demonstrateProductExtentAndPersistence() {
         System.out.println("--- Product Extent and Persistence Example ---");
 
-        // Clear any existing extent
-        Product.clearExtent();
-
         // Create some products
         System.out.println("Creating products...");
         var product1 = new Product("Laptop", "High-performance laptop", 2999.99, 10, List.of("laptop1.jpg", "laptop2.jpg"));
@@ -57,11 +54,6 @@ public class ExtentPersistenceExample {
             Product.saveExtent();
             System.out.println("Product extent saved successfully!");
 
-            // Clear extent in memory
-            System.out.println("\nClearing Product extent from memory...");
-            Product.clearExtent();
-            System.out.println("Product extent size after clearing: " + Product.getExtent().size());
-
             // Load extent from file
             System.out.println("\nLoading Product extent from file...");
             Product.loadExtent();
@@ -78,9 +70,6 @@ public class ExtentPersistenceExample {
 
     private static void demonstrateCategoryExtentAndPersistence() {
         System.out.println("--- Category Extent and Persistence Example ---");
-
-        // Clear any existing extent
-        Category.clearExtent();
 
         // Create category hierarchy
         System.out.println("Creating categories...");
@@ -111,11 +100,6 @@ public class ExtentPersistenceExample {
             Category.saveExtent();
             System.out.println("Category extent saved successfully!");
 
-            // Clear extent in memory
-            System.out.println("\nClearing Category extent from memory...");
-            Category.clearExtent();
-            System.out.println("Category extent size after clearing: " + Category.getExtent().size());
-
             // Load extent from file
             System.out.println("\nLoading Category extent from file...");
             Category.loadExtent();
@@ -135,9 +119,6 @@ public class ExtentPersistenceExample {
 
     private static void demonstrateOrderExtentAndPersistence() {
         System.out.println("--- Order Extent and Persistence Example ---");
-
-        // Clear any existing extent
-        Order.clearExtent();
 
         // Create products for orders
         var product1 = new Product("Product A", "Description A", 100.0, 10, List.of("a.jpg"));
@@ -165,11 +146,6 @@ public class ExtentPersistenceExample {
             System.out.println("\nSaving Order extent to file...");
             Order.saveExtent();
             System.out.println("Order extent saved successfully!");
-
-            // Clear extent in memory
-            System.out.println("\nClearing Order extent from memory...");
-            Order.clearExtent();
-            System.out.println("Order extent size after clearing: " + Order.getExtent().size());
 
             // Load extent from file
             System.out.println("\nLoading Order extent from file...");

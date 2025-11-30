@@ -68,11 +68,6 @@ public class Product implements Serializable {
         return new ArrayList<>(extent);
     }
 
-    public static void clearExtent() {
-        extent.clear();
-    }
-
-    // Class extent persistence methods
     public static void saveExtent() throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(EXTENT_FILE))) {
             oos.writeObject(extent);

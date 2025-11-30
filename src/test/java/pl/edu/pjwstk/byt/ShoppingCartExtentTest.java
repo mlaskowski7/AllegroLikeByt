@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,10 +16,15 @@ public class ShoppingCartExtentTest {
 
     private static final String EXTENT_FILE = "ShoppingCart_extent.ser";
 
+    private void clearExtent() throws Exception {
+        Field field = ShoppingCart.class.getDeclaredField("extent");
+        field.setAccessible(true);
+        ((List<?>) field.get(null)).clear();
+    }
+
     @BeforeEach
-    void setUp() {
-        // Clear extent before each test
-        ShoppingCart.clearExtent();
+    void setUp() throws Exception {
+        clearExtent();
         // Delete persistence file if exists
         File file = new File(EXTENT_FILE);
         if (file.exists()) {
@@ -27,9 +33,9 @@ public class ShoppingCartExtentTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws Exception {
         // Clean up after each test
-        ShoppingCart.clearExtent();
+        clearExtent();
         File file = new File(EXTENT_FILE);
         if (file.exists()) {
             file.delete();
@@ -95,7 +101,7 @@ public class ShoppingCartExtentTest {
     }
 
     @Test
-    void loadExtent_afterSaving_loadsAllShoppingCarts() throws IOException, ClassNotFoundException {
+    void loadExtent_afterSaving_loadsAllShoppingCarts() throws Exception {
         // given
         var createdDate1 = LocalDateTime.now().minusDays(1);
         var createdDate2 = LocalDateTime.now().minusDays(2);
@@ -103,8 +109,7 @@ public class ShoppingCartExtentTest {
         var cart2 = new ShoppingCart(createdDate2);
         ShoppingCart.saveExtent();
 
-        // Clear extent
-        ShoppingCart.clearExtent();
+        clearExtent();
 
         // when
         ShoppingCart.loadExtent();
@@ -123,7 +128,7 @@ public class ShoppingCartExtentTest {
     }
 
     @Test
-    void saveAndLoadExtent_preservesShoppingCartAttributes() throws IOException, ClassNotFoundException {
+    void saveAndLoadExtent_preservesShoppingCartAttributes() throws Exception {
         // given
         var createdDate = LocalDateTime.now().minusDays(5);
         var cart = new ShoppingCart(createdDate);
@@ -131,8 +136,7 @@ public class ShoppingCartExtentTest {
         cart.updateCart(product, 2);
         ShoppingCart.saveExtent();
 
-        // Clear extent
-        ShoppingCart.clearExtent();
+        clearExtent();
 
         // when
         ShoppingCart.loadExtent();

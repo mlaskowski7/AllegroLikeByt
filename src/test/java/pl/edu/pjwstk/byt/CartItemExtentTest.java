@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,10 +15,15 @@ public class CartItemExtentTest {
 
     private static final String EXTENT_FILE = "CartItem_extent.ser";
 
+    private void clearExtent() throws Exception {
+        Field field = CartItem.class.getDeclaredField("extent");
+        field.setAccessible(true);
+        ((List<?>) field.get(null)).clear();
+    }
+
     @BeforeEach
-    void setUp() {
-        // Clear extent before each test
-        CartItem.clearExtent();
+    void setUp() throws Exception {
+        clearExtent();
         // Delete persistence file if exists
         File file = new File(EXTENT_FILE);
         if (file.exists()) {
@@ -26,9 +32,9 @@ public class CartItemExtentTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws Exception {
         // Clean up after each test
-        CartItem.clearExtent();
+        clearExtent();
         File file = new File(EXTENT_FILE);
         if (file.exists()) {
             file.delete();
@@ -99,7 +105,7 @@ public class CartItemExtentTest {
     }
 
     @Test
-    void loadExtent_afterSaving_loadsAllCartItems() throws IOException, ClassNotFoundException {
+    void loadExtent_afterSaving_loadsAllCartItems() throws Exception {
         // given
         var product1 = new Product("Product 1", "Description 1", 10.0, 5, List.of("image1.jpg"));
         var product2 = new Product("Product 2", "Description 2", 20.0, 10, List.of("image2.jpg"));
@@ -107,8 +113,7 @@ public class CartItemExtentTest {
         var cartItem2 = new CartItem(3, product2);
         CartItem.saveExtent();
 
-        // Clear extent
-        CartItem.clearExtent();
+        clearExtent();
 
         // when
         CartItem.loadExtent();
@@ -127,15 +132,14 @@ public class CartItemExtentTest {
     }
 
     @Test
-    void saveAndLoadExtent_preservesCartItemAttributes() throws IOException, ClassNotFoundException {
+    void saveAndLoadExtent_preservesCartItemAttributes() throws Exception {
         // given
         var product = new Product("Test Product", "Test Description", 15.5, 20, List.of("test.jpg"));
         var cartItem = new CartItem(5, product);
         cartItem.updateQuantity(10);
         CartItem.saveExtent();
 
-        // Clear extent
-        CartItem.clearExtent();
+        clearExtent();
 
         // when
         CartItem.loadExtent();

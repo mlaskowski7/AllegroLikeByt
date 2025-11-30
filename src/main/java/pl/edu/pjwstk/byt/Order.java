@@ -70,16 +70,10 @@ public class Order implements Serializable {
         return "Order{" + "date=" + orderDate + ", status='" + status + '\'' + ", total=" + totalAmount + ", items=" + items.size() + '}';
     }
 
-    // Class extent methods
     public static List<Order> getExtent() {
         return new ArrayList<>(extent);
     }
 
-    public static void clearExtent() {
-        extent.clear();
-    }
-
-    // Class extent persistence methods
     public static void saveExtent() throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(EXTENT_FILE))) {
             oos.writeObject(extent);

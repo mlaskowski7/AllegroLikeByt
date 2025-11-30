@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,10 +15,15 @@ public class CategoryExtentTest {
 
     private static final String EXTENT_FILE = "Category_extent.ser";
 
+    private void clearExtent() throws Exception {
+        Field field = Category.class.getDeclaredField("extent");
+        field.setAccessible(true);
+        ((List<?>) field.get(null)).clear();
+    }
+
     @BeforeEach
-    void setUp() {
-        // Clear extent before each test
-        Category.clearExtent();
+    void setUp() throws Exception {
+        clearExtent();
         // Delete persistence file if exists
         File file = new File(EXTENT_FILE);
         if (file.exists()) {
@@ -26,9 +32,9 @@ public class CategoryExtentTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws Exception {
         // Clean up after each test
-        Category.clearExtent();
+        clearExtent();
         File file = new File(EXTENT_FILE);
         if (file.exists()) {
             file.delete();
@@ -94,14 +100,13 @@ public class CategoryExtentTest {
     }
 
     @Test
-    void loadExtent_afterSaving_loadsAllCategories() throws IOException, ClassNotFoundException {
+    void loadExtent_afterSaving_loadsAllCategories() throws Exception {
         // given
         var category1 = new Category("Electronics", "Electronic devices", null);
         var category2 = new Category("Clothing", "Clothing items", null);
         Category.saveExtent();
 
-        // Clear extent
-        Category.clearExtent();
+        clearExtent();
 
         // when
         Category.loadExtent();
@@ -120,14 +125,13 @@ public class CategoryExtentTest {
     }
 
     @Test
-    void saveAndLoadExtent_preservesCategoryAttributes() throws IOException, ClassNotFoundException {
+    void saveAndLoadExtent_preservesCategoryAttributes() throws Exception {
         // given
         var parent = new Category("Parent", "Parent Description", null);
         var child = new Category("Child", "Child Description", parent);
         Category.saveExtent();
 
-        // Clear extent
-        Category.clearExtent();
+        clearExtent();
 
         // when
         Category.loadExtent();

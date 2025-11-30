@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,10 +16,15 @@ public class OrderExtentTest {
 
     private static final String EXTENT_FILE = "Order_extent.ser";
 
+    private void clearExtent() throws Exception {
+        Field field = Order.class.getDeclaredField("extent");
+        field.setAccessible(true);
+        ((List<?>) field.get(null)).clear();
+    }
+
     @BeforeEach
-    void setUp() {
-        // Clear extent before each test
-        Order.clearExtent();
+    void setUp() throws Exception {
+        clearExtent();
         // Delete persistence file if exists
         File file = new File(EXTENT_FILE);
         if (file.exists()) {
@@ -27,9 +33,9 @@ public class OrderExtentTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws Exception {
         // Clean up after each test
-        Order.clearExtent();
+        clearExtent();
         File file = new File(EXTENT_FILE);
         if (file.exists()) {
             file.delete();
@@ -95,14 +101,13 @@ public class OrderExtentTest {
     }
 
     @Test
-    void loadExtent_afterSaving_loadsAllOrders() throws IOException, ClassNotFoundException {
+    void loadExtent_afterSaving_loadsAllOrders() throws Exception {
         // given
         var order1 = new Order(LocalDateTime.now().minusDays(1), "pending");
         var order2 = new Order(LocalDateTime.now().minusDays(2), "completed");
         Order.saveExtent();
 
-        // Clear extent
-        Order.clearExtent();
+        clearExtent();
 
         // when
         Order.loadExtent();
@@ -121,7 +126,7 @@ public class OrderExtentTest {
     }
 
     @Test
-    void saveAndLoadExtent_preservesOrderAttributes() throws IOException, ClassNotFoundException {
+    void saveAndLoadExtent_preservesOrderAttributes() throws Exception {
         // given
         var orderDate = LocalDateTime.now().minusDays(5);
         var order = new Order(orderDate, "pending");
@@ -131,8 +136,7 @@ public class OrderExtentTest {
         order.calculateTotal();
         Order.saveExtent();
 
-        // Clear extent
-        Order.clearExtent();
+        clearExtent();
 
         // when
         Order.loadExtent();
