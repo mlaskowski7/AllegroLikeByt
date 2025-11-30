@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class ShoppingCart {
 
-    public static final int MAX_CART_ITEMS = 50;
+    public static final int MAX_CART_ITEMS = 50; // class attribute
 
     private final Set<CartItem> cartItems = new HashSet<>();
     private LocalDateTime createdDate;
