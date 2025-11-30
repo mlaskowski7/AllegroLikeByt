@@ -13,8 +13,8 @@ public class Product implements Serializable {
     private double price;
     private int stockQuantity;
     private List<String> images; // multi value attribute [1..*]
-    private List<Integer> rating; // list of ratings
-    private double avgRating; // /avgRating (derived)
+    private List<Integer> rating;
+    private double avgRating; // derived attribute
 
     public Product(String name, String description, double price, int stockQuantity, List<String> images) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException("Name cannot be empty");
@@ -33,8 +33,9 @@ public class Product implements Serializable {
     }
 
     public void updateStock(int change) {
-        if (stockQuantity + change < 0)
+        if (stockQuantity + change < 0) {
             throw new IllegalArgumentException("Not enough stock");
+        }
         stockQuantity += change;
     }
 
@@ -49,8 +50,9 @@ public class Product implements Serializable {
     }
 
     public void addReview(int stars) {
-        if (stars < 1 || stars > 5)
-            throw new IllegalArgumentException("Rating must be between 1 and 5");
+        if (stars < 1 || stars > 5) {
+            throw new IllegalArgumentException("Stars must be between 1 and 5");
+        }
         rating.add(stars);
         calculateAverageRating();
     }
@@ -81,8 +83,13 @@ public class Product implements Serializable {
         }
     }
 
+    public List<String> getImages() {
+        return new ArrayList<>(images);
+    }
+
+
     @Override
     public String toString() {
-        return name + " | Price: " + price + " | Avg Rating: " + avgRating;
+        return name + " Price: " + price + " Avg Rating: " + avgRating;
     }
 }

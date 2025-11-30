@@ -16,7 +16,7 @@ public class Category implements Serializable {
 
     private String description;
 
-    private Category parentCategory;
+    private Category parentCategory; // optional attribute
 
     private List<Category> subCategories;
 

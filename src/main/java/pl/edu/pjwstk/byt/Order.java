@@ -12,14 +12,14 @@ public class Order implements Serializable {
     private static List<Order> extent = new ArrayList<>();
 
     private final LocalDateTime orderDate; // complex attribute
-    private String status;
+    private OrderStatus status;
     private double totalAmount; // derived attribute
     private List<Product> items; // Order consists of (1..*) Products
 
-    public Order(LocalDateTime orderDate, String status) {
+    public Order(LocalDateTime orderDate, OrderStatus status) {
         if (orderDate == null) throw new IllegalArgumentException("Order date cannot be null");
         if (orderDate.isAfter(LocalDateTime.now())) throw new IllegalArgumentException("Order date cannot be in the future");
-        if (status == null || status.isBlank()) throw new IllegalArgumentException("Status cannot be empty");
+        if (status == null) throw new IllegalArgumentException("Order status cannot be null");
 
         this.orderDate = orderDate;
         this.status = status;
@@ -29,7 +29,15 @@ public class Order implements Serializable {
     }
 
 
-    public String getStatus() {
+    public void setStatus(OrderStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("Order status cannot be null");
+        }
+        this.status = status;
+    }
+
+
+    public OrderStatus getStatus() {
         return status;
     }
 
@@ -49,20 +57,10 @@ public class Order implements Serializable {
         totalAmount = sum;
     }
 
-    public void addItem(Product product) {
-        if (product == null) throw new IllegalArgumentException("Product cannot be null");
-        items.add(product);
-    }
-
-    public void changeOrderStatus(String newStatus) {
-        if (newStatus == null || newStatus.isBlank())
-            throw new IllegalArgumentException("Invalid status");
-        status = newStatus;
-    }
-
     public void checkPendingOrders() {
-        if (status.equalsIgnoreCase("pending"))
+        if (status == OrderStatus.PAYMENT_PENDING) {
             System.out.println("Order is still pending...");
+        }
     }
 
     @Override
