@@ -18,7 +18,7 @@ public class CartItem implements Serializable {
 
     public CartItem(int quantity, Product product, ShoppingCart cart) {
         if (cart == null) {
-            throw new IllegalArgumentException("Cart item must belong to a shopping cart");
+            throw new IllegalArgumentException("Cart item must be instantiated with a shopping cart");
         }
         if (product == null) {
             throw new IllegalArgumentException("Cart item must have a product");

@@ -17,7 +17,7 @@ public class CartItemTest {
         var product = createTestProduct();
 
         // when
-        var cartItem = new CartItem(quantity, product);
+        var cartItem = new CartItem(quantity, product, new ShoppingCart());
 
         // then
         assertNotNull(cartItem);
@@ -32,7 +32,7 @@ public class CartItemTest {
         var product = createTestProduct();
 
         // when
-        var cartItem = new CartItem(quantity, product);
+        var cartItem = new CartItem(quantity, product, new ShoppingCart());
 
         // then
         assertNotNull(cartItem);
@@ -46,7 +46,7 @@ public class CartItemTest {
         var product = createTestProduct();
 
         // when
-        var cartItem = new CartItem(quantity, product);
+        var cartItem = new CartItem(quantity, product, new ShoppingCart());
 
         // then
         assertNotNull(cartItem);
@@ -61,16 +61,29 @@ public class CartItemTest {
         // then
         var exception = assertThrows(
             IllegalArgumentException.class,
-            () -> new CartItem(quantity, null)
+            () -> new CartItem(quantity, null, new ShoppingCart())
         );
         assertEquals("Cart item must have a product", exception.getMessage());
+    }
+
+    @Test
+    void ctor_nullCart_illegalArgumentExceptionThrown() {
+        // given
+        var quantity = 5;
+
+        // then
+        var exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> new CartItem(quantity, createTestProduct(), null)
+        );
+        assertEquals("Cart item must be instantiated with a shopping cart", exception.getMessage());
     }
 
     @Test
     void updateQuantity_validPositiveQuantity_quantityUpdated() {
         // given
         var product = createTestProduct();
-        var cartItem = new CartItem(5, product);
+        var cartItem = new CartItem(5, product, new ShoppingCart());
         var newQuantity = 10;
 
         // when
@@ -84,7 +97,7 @@ public class CartItemTest {
     void updateQuantity_zeroQuantity_quantityUpdated() {
         // given
         var product = createTestProduct();
-        var cartItem = new CartItem(5, product);
+        var cartItem = new CartItem(5, product, new ShoppingCart());
         var newQuantity = 0;
 
         // when
@@ -98,7 +111,7 @@ public class CartItemTest {
     void updateQuantity_negativeQuantity_quantityUpdated() {
         // given
         var product = createTestProduct();
-        var cartItem = new CartItem(5, product);
+        var cartItem = new CartItem(5, product, new ShoppingCart());
         var newQuantity = -3;
 
         // when
@@ -113,7 +126,7 @@ public class CartItemTest {
     void updateQuantity_variousPositiveQuantities_quantityUpdated(int newQuantity) {
         // given
         var product = createTestProduct();
-        var cartItem = new CartItem(1, product);
+        var cartItem = new CartItem(1, product, new ShoppingCart());
 
         // when
         cartItem.updateQuantity(newQuantity);
@@ -126,7 +139,7 @@ public class CartItemTest {
     void updateQuantity_multipleTimes_quantityUpdatedEachTime() {
         // given
         var product = createTestProduct();
-        var cartItem = new CartItem(1, product);
+        var cartItem = new CartItem(1, product, new ShoppingCart());
 
         // then
         cartItem.updateQuantity(5);
@@ -147,7 +160,7 @@ public class CartItemTest {
         // given
         var quantity = 15;
         var product = createTestProduct();
-        var cartItem = new CartItem(quantity, product);
+        var cartItem = new CartItem(quantity, product, new ShoppingCart());
 
         // when
         var result = cartItem.getQuantity();
@@ -161,7 +174,7 @@ public class CartItemTest {
         // given
         var quantity = 5;
         var product = createTestProduct();
-        var cartItem = new CartItem(quantity, product);
+        var cartItem = new CartItem(quantity, product, new ShoppingCart());
 
         // when
         var result = cartItem.getProduct();
@@ -176,8 +189,8 @@ public class CartItemTest {
     void getProduct_sameProductForMultipleCartItems_returnsCorrectProduct() {
         // given
         var product = createTestProduct();
-        var cartItem1 = new CartItem(5, product);
-        var cartItem2 = new CartItem(10, product);
+        var cartItem1 = new CartItem(5, product, new ShoppingCart());
+        var cartItem2 = new CartItem(10, product, new ShoppingCart());
 
         // when
         var result1 = cartItem1.getProduct();
@@ -194,8 +207,8 @@ public class CartItemTest {
         // given
         var product1 = new Product("Product 1", "Description 1", 10.0, 5, List.of("image1.jpg"));
         var product2 = new Product("Product 2", "Description 2", 20.0, 10, List.of("image2.jpg"));
-        var cartItem1 = new CartItem(5, product1);
-        var cartItem2 = new CartItem(10, product2);
+        var cartItem1 = new CartItem(5, product1, new ShoppingCart());
+        var cartItem2 = new CartItem(10, product2, new ShoppingCart());
 
         // when
         var result1 = cartItem1.getProduct();
