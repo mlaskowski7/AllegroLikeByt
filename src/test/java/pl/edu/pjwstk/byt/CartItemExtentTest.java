@@ -46,9 +46,9 @@ public class CartItemExtentTest {
         // given
         var product1 = new Product("Product 1", "Description 1", 10.0, 5, List.of("image1.jpg"));
         var product2 = new Product("Product 2", "Description 2", 20.0, 10, List.of("image2.jpg"));
-        var cartItem1 = new CartItem(2, product1);
-        var cartItem2 = new CartItem(3, product2);
-        var cartItem3 = new CartItem(1, product1);
+        var cartItem1 = new CartItem(2, product1, new ShoppingCart());
+        var cartItem2 = new CartItem(3, product2, new ShoppingCart());
+        var cartItem3 = new CartItem(1, product1, new ShoppingCart());
 
         // when
         var extent = CartItem.getExtent();
@@ -74,7 +74,7 @@ public class CartItemExtentTest {
     void getExtent_returnsCopy_notOriginalList() {
         // given
         var product = new Product("Product", "Description", 10.0, 5, List.of("image.jpg"));
-        var cartItem = new CartItem(1, product);
+        var cartItem = new CartItem(1, product, new ShoppingCart());
         var extent1 = CartItem.getExtent();
         int originalSize = extent1.size();
 
@@ -92,8 +92,8 @@ public class CartItemExtentTest {
         // given
         var product1 = new Product("Product 1", "Description 1", 10.0, 5, List.of("image1.jpg"));
         var product2 = new Product("Product 2", "Description 2", 20.0, 10, List.of("image2.jpg"));
-        var cartItem1 = new CartItem(2, product1);
-        var cartItem2 = new CartItem(3, product2);
+        var cartItem1 = new CartItem(2, product1, new ShoppingCart());
+        var cartItem2 = new CartItem(3, product2, new ShoppingCart());
 
         // when
         CartItem.saveExtent();
@@ -109,8 +109,8 @@ public class CartItemExtentTest {
         // given
         var product1 = new Product("Product 1", "Description 1", 10.0, 5, List.of("image1.jpg"));
         var product2 = new Product("Product 2", "Description 2", 20.0, 10, List.of("image2.jpg"));
-        var cartItem1 = new CartItem(2, product1);
-        var cartItem2 = new CartItem(3, product2);
+        var cartItem1 = new CartItem(2, product1, new ShoppingCart());
+        var cartItem2 = new CartItem(3, product2, new ShoppingCart());
         CartItem.saveExtent();
 
         clearExtent();
@@ -135,7 +135,7 @@ public class CartItemExtentTest {
     void saveAndLoadExtent_preservesCartItemAttributes() throws Exception {
         // given
         var product = new Product("Test Product", "Test Description", 15.5, 20, List.of("test.jpg"));
-        var cartItem = new CartItem(5, product);
+        var cartItem = new CartItem(5, product, new ShoppingCart());
         cartItem.updateQuantity(10);
         CartItem.saveExtent();
 

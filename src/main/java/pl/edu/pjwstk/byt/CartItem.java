@@ -12,13 +12,19 @@ public class CartItem implements Serializable {
 
     private final Product product;
 
+    private ShoppingCart cart; // reverse connection
+
     private int quantity;
 
-    public CartItem(int quantity, Product product) {
+    public CartItem(int quantity, Product product, ShoppingCart cart) {
+        if (cart == null) {
+            throw new IllegalArgumentException("Cart item must be instantiated with a shopping cart");
+        }
         if (product == null) {
             throw new IllegalArgumentException("Cart item must have a product");
         }
 
+        this.cart = cart;
         this.quantity = quantity;
         this.product = product;
         extent.add(this);
@@ -34,6 +40,14 @@ public class CartItem implements Serializable {
 
     public Product getProduct() {
         return product;
+    }
+
+    public ShoppingCart getCart() {
+        return cart;
+    }
+
+    public void setCart(ShoppingCart cart) {
+        this.cart = cart;
     }
 
     public static List<CartItem> getExtent() {

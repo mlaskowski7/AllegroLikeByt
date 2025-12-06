@@ -151,7 +151,7 @@ public class CategoryTest {
     }
 
     @Test
-    void setParentCategory_null_parentRemoved() {
+    void setParentCategory_null_parentRemovedSubcategoryRemovedFromParent() {
         // given
         var parentCategory = new Category("Parent", "Parent description", null);
         var category = new Category("Child", "Child description", parentCategory);
@@ -161,6 +161,7 @@ public class CategoryTest {
 
         // then
         assertNull(category.getParentCategory());
+        assertEquals(0, parentCategory.getSubCategories().size());
     }
 
 
@@ -171,7 +172,7 @@ public class CategoryTest {
         var subcategory = new Category("Child", "Child description", null);
 
         // when
-        parentCategory.AddSubcategory(subcategory);
+        parentCategory.addSubcategory(subcategory);
 
         // then
         assertEquals(1, parentCategory.getSubCategories().size());
@@ -188,9 +189,9 @@ public class CategoryTest {
         var subcategory3 = new Category("Child3", "Child3 description", null);
 
         // when
-        parentCategory.AddSubcategory(subcategory1);
-        parentCategory.AddSubcategory(subcategory2);
-        parentCategory.AddSubcategory(subcategory3);
+        parentCategory.addSubcategory(subcategory1);
+        parentCategory.addSubcategory(subcategory2);
+        parentCategory.addSubcategory(subcategory3);
 
         // then
         assertEquals(3, parentCategory.getSubCategories().size());
@@ -210,7 +211,7 @@ public class CategoryTest {
         // then
         var exception = assertThrows(
             IllegalArgumentException.class,
-            () -> parentCategory.AddSubcategory(null)
+            () -> parentCategory.addSubcategory(null)
         );
         assertEquals("Subcategory cannot be null", exception.getMessage());
         assertTrue(parentCategory.getSubCategories().isEmpty());
@@ -224,7 +225,7 @@ public class CategoryTest {
         // then
         var exception = assertThrows(
             IllegalArgumentException.class,
-            () -> category.AddSubcategory(category)
+            () -> category.addSubcategory(category)
         );
         assertEquals("Category cannot be a subcategory of itself", exception.getMessage());
         assertTrue(category.getSubCategories().isEmpty());
@@ -238,7 +239,7 @@ public class CategoryTest {
         var subcategory = new Category("Child", "Child description", oldParent);
 
         // when
-        newParent.AddSubcategory(subcategory);
+        newParent.addSubcategory(subcategory);
 
         // then
         assertEquals(newParent, subcategory.getParentCategory());
@@ -246,56 +247,22 @@ public class CategoryTest {
         assertTrue(newParent.getSubCategories().contains(subcategory));
     }
 
-
     @Test
-    void setSubCategories_validList_subcategoriesUpdated() {
+    void addSubcategory_subcategoryAlreadyIsASubcategory_illegalArgumentExceptionThrown() {
         // given
-        var category = new Category("Parent", "Parent description", null);
-        var sub1 = new Category("Child1", "Child1 description", null);
-        var sub2 = new Category("Child2", "Child2 description", null);
-        var subcategories = new ArrayList<Category>();
-        subcategories.add(sub1);
-        subcategories.add(sub2);
-
-        // when
-        category.setSubCategories(subcategories);
+        var parent = new Category("New Parent", "New parent description", null);
+        var subcategory = new Category("Child", "Child description", null);
+        parent.addSubcategory(subcategory);
 
         // then
-        assertEquals(2, category.getSubCategories().size());
-        assertTrue(category.getSubCategories().contains(sub1));
-        assertTrue(category.getSubCategories().contains(sub2));
+        var exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> parent.addSubcategory(subcategory)
+        );
+        assertEquals("Subcategory already registered", exception.getMessage());
+        assertEquals(1, parent.getSubCategories().size());
     }
 
-    @Test
-    void setSubCategories_emptyList_subcategoriesCleared() {
-        // given
-        var category = new Category("Parent", "Parent description", null);
-        var sub1 = new Category("Child1", "Child1 description", null);
-        category.AddSubcategory(sub1);
-        var emptyList = new ArrayList<Category>();
-
-        // when
-        category.setSubCategories(emptyList);
-
-        // then
-        assertTrue(category.getSubCategories().isEmpty());
-    }
-
-    @Test
-    void setSubCategories_null_subcategoriesSetToNull() {
-        // given
-        var category = new Category("Parent", "Parent description", null);
-        var sub1 = new Category("Child1", "Child1 description", null);
-        category.AddSubcategory(sub1);
-
-        // when
-        category.setSubCategories(null);
-
-        // then
-        assertNull(category.getSubCategories());
-    }
-
-    // Getter Tests
 
     @Test
     void getSubCategories_categoryWithSubcategories_returnsSubcategoriesList() {
@@ -303,8 +270,8 @@ public class CategoryTest {
         var category = new Category("Parent", "Parent description", null);
         var sub1 = new Category("Child1", "Child1 description", null);
         var sub2 = new Category("Child2", "Child2 description", null);
-        category.AddSubcategory(sub1);
-        category.AddSubcategory(sub2);
+        category.addSubcategory(sub1);
+        category.addSubcategory(sub2);
 
         // when
         var subcategories = category.getSubCategories();
