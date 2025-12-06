@@ -62,7 +62,7 @@ public class ShoppingCart implements Serializable {
         }
 
 
-        var cartItem = new CartItem(1, product, this);
+        var cartItem = new CartItem(quantity, product, this);
         cartItems.put(product.getId(), cartItem);
         lastUpdated = LocalDateTime.now();
         return true;

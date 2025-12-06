@@ -197,7 +197,7 @@ public class ShoppingCartTest {
         // then
         assertTrue(result);
         assertEquals(1, shoppingCart.getCartItems().size());
-        assertEquals(1, shoppingCart.getCartItems().get(product.getId()).getQuantity());
+        assertEquals(quantity, shoppingCart.getCartItems().get(product.getId()).getQuantity());
     }
 
     @Test
