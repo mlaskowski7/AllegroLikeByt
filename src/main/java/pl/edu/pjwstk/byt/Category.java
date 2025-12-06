@@ -46,6 +46,9 @@ public class Category implements Serializable {
         if (subcategory == this) {
             throw new IllegalArgumentException("Category cannot be a subcategory of itself");
         }
+        if (subCategories.contains(subcategory)) {
+            throw new IllegalArgumentException("Subcategory already registered");
+        }
 
         subcategory.setParentCategory(this);
         subCategories.add(subcategory);

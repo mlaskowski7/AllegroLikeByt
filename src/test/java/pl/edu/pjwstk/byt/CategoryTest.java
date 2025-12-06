@@ -248,6 +248,23 @@ public class CategoryTest {
     }
 
     @Test
+    void addSubcategory_subcategoryAlreadyIsASubcategory_illegalArgumentExceptionThrown() {
+        // given
+        var parent = new Category("New Parent", "New parent description", null);
+        var subcategory = new Category("Child", "Child description", null);
+        parent.addSubcategory(subcategory);
+
+        // then
+        var exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> parent.addSubcategory(subcategory)
+        );
+        assertEquals("Subcategory already registered", exception.getMessage());
+        assertEquals(1, parent.getSubCategories().size());
+    }
+
+
+    @Test
     void getSubCategories_categoryWithSubcategories_returnsSubcategoriesList() {
         // given
         var category = new Category("Parent", "Parent description", null);
