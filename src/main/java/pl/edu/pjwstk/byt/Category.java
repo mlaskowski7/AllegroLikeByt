@@ -16,7 +16,7 @@ public class Category implements Serializable {
 
     private String description;
 
-    private Category parentCategory; // optional attribute
+    private Category parentCategory; // optional attribute, reflex association
 
     private List<Category> subCategories;
 
@@ -32,14 +32,14 @@ public class Category implements Serializable {
         this.description = description;
         this.parentCategory = parentCategory;
         if (parentCategory != null) {
-            parentCategory.AddSubcategory(this);
+            parentCategory.addSubcategory(this);
         }
 
         this.subCategories = new ArrayList<>();
         extent.add(this);
     }
 
-    public void AddSubcategory(Category subcategory) {
+    public void addSubcategory(Category subcategory) {
         if (subcategory == null) {
             throw new IllegalArgumentException("Subcategory cannot be null");
         }
@@ -78,15 +78,16 @@ public class Category implements Serializable {
     }
 
     public void setParentCategory(Category parentCategory) {
+        var prevParent = this.parentCategory;
+        if (prevParent != null && prevParent != parentCategory) {
+            prevParent.getSubCategories().remove(this);
+        }
+
         this.parentCategory = parentCategory;
     }
 
     public List<Category> getSubCategories() {
         return subCategories;
-    }
-
-    public void setSubCategories(List<Category> subCategories) {
-        this.subCategories = subCategories;
     }
 
     public static List<Category> getExtent() {
