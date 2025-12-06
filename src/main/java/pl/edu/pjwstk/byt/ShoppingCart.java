@@ -4,8 +4,10 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ShoppingCart implements Serializable {
@@ -16,7 +18,7 @@ public class ShoppingCart implements Serializable {
 
     public static final int MAX_CART_ITEMS = 50; // class attribute
 
-    private final Set<CartItem> cartItems = new HashSet<>();
+    private final Map<String, CartItem> cartItems = new HashMap<>(); // qualified association
     private LocalDateTime createdDate;
     private LocalDateTime lastUpdated;
 
@@ -35,8 +37,8 @@ public class ShoppingCart implements Serializable {
         return lastUpdated;
     }
 
-    public Set<CartItem> getCartItems() {
-        return Collections.unmodifiableSet(cartItems);
+    public Map<String, CartItem> getCartItems() {
+        return Collections.unmodifiableMap(cartItems);
     }
 
     public void clearCart() {
@@ -50,19 +52,31 @@ public class ShoppingCart implements Serializable {
         }
 
         var cartItemsCount = cartItems
+            .values()
             .stream()
-            .mapToInt(ci -> ci.getQuantity())
+            .mapToInt(CartItem::getQuantity)
             .sum();
 
         if (quantity + cartItemsCount > MAX_CART_ITEMS) {
             return false;
         }
-        
 
-        var cartItem = new CartItem(1, product);
-        cartItems.add(cartItem);
+
+        var cartItem = new CartItem(1, product, this);
+        cartItems.put(product.getId(), cartItem);
         lastUpdated = LocalDateTime.now();
         return true;
+    }
+
+    public void remove(String productId) {
+        if (!cartItems.containsKey(productId)) {
+            throw new IllegalArgumentException("Product is not in the cart");
+        }
+
+        var cartItem = cartItems.get(productId);
+        cartItem.setCart(null);
+        cartItems.remove(productId);
+        lastUpdated = LocalDateTime.now();
     }
 
     public static List<ShoppingCart> getExtent() {

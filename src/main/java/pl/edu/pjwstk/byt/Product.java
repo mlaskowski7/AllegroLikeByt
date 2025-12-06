@@ -15,6 +15,7 @@ public class Product implements Serializable {
     private List<String> images; // multi value attribute [1..*]
     private List<Integer> rating;
     private double avgRating; // derived attribute
+    private final String id; // unique identifier (GUID)
 
     public Product(String name, String description, double price, int stockQuantity, List<String> images) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException("Name cannot be empty");
@@ -22,6 +23,7 @@ public class Product implements Serializable {
         if (price < 0) throw new IllegalArgumentException("Price cannot be negative");
         if (stockQuantity < 0) throw new IllegalArgumentException("Stock quantity cannot be negative");
         if (images == null || images.isEmpty()) throw new IllegalArgumentException("At least one image required");
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.description = description;
         this.price = price;
@@ -64,6 +66,7 @@ public class Product implements Serializable {
     public String getName() { return name; }
     public double getPrice() { return price; }
     public double getAvgRating() { return avgRating; }
+    public String getId() { return id; }
 
 
     public static List<Product> getExtent() {
