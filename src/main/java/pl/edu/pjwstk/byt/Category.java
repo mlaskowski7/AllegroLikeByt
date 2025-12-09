@@ -19,6 +19,8 @@ public class Category implements Serializable {
     private Category parentCategory; // optional attribute, reflex association
 
     private List<Category> subCategories;
+    private List<Product> products = new ArrayList<>();
+
 
     public Category(String name, String description, Category parentCategory) {
         if (isNullOrBlank(name)) {
@@ -38,6 +40,40 @@ public class Category implements Serializable {
         this.subCategories = new ArrayList<>();
         extent.add(this);
     }
+    // product <-> category 0..1 aggregation implementation (exceptions)
+    public void addProduct(Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product cannot be null");
+        }
+
+        if (products.contains(product)) {
+            throw new IllegalArgumentException("Product already added to this category");
+        }
+
+        if (product.getCategory() != null) {
+            throw new IllegalArgumentException("Product already belongs to another category");
+        }
+
+        products.add(product);
+        product.assignCategory(this); // reverse connection
+    }
+    public void removeProduct(Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product cannot be null");
+        }
+
+        if (!products.contains(product)) {
+            throw new IllegalArgumentException("Product is not in this category");
+        }
+
+        products.remove(product);
+        product.removeCategory(); // reverse connection
+    }
+    public List<Product> getProducts() {
+        return new ArrayList<>(products);
+    }
+
+
 
     public void addSubcategory(Category subcategory) {
         if (subcategory == null) {
