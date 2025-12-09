@@ -16,6 +16,7 @@ public class Product implements Serializable {
     private List<Integer> rating;
     private double avgRating; // derived attribute
     private final String id; // unique identifier (GUID)
+    private Category category; // 0..1 aggregation
 
     public Product(String name, String description, double price, int stockQuantity, List<String> images) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException("Name cannot be empty");
@@ -32,6 +33,18 @@ public class Product implements Serializable {
         this.rating = new ArrayList<>();
         this.avgRating = 0;
         extent.add(this);
+    }
+
+    // product <-> category 0..1 aggregation implementation
+    public Category getCategory() {
+        return category;
+    }
+    protected void assignCategory(Category category) {
+        this.category = category;
+    }
+
+    protected void removeCategory() {
+        this.category = null;
     }
 
     public void updateStock(int change) {
