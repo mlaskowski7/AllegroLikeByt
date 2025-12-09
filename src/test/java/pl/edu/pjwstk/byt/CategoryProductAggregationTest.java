@@ -38,7 +38,7 @@ public class CategoryProductAggregationTest {
         cat1.addProduct(product);
 
         var exception = assertThrows(IllegalArgumentException.class, () -> cat2.addProduct(product));
-        assertEquals("Product already belongs to another cathegory", exception.getMessage());
+        assertEquals("Product already belongs to another category", exception.getMessage());
     }
 
     @Test
