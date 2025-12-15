@@ -53,8 +53,6 @@ public class OrderExtentTest {
         var order1 = new Order(customer, product, 1);
         var order2 = new Order(customer, product, 2);
 
-        // Wait, Order.getExtent() returns all orders.
-        // If we create orders, they are added.
 
         // when
         var extent = Order.getExtent();
