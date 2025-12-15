@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Example class demonstrating the implementation of class extent and extent persistence.
+ * Example class demonstrating the implementation of class extent and extent
+ * persistence.
  * This class showcases how to use extent to store all instances of a class
  * and how to persist them to disk and load them back.
  */
@@ -31,7 +32,8 @@ public class ExtentPersistenceExample {
 
         // Create some products
         System.out.println("Creating products...");
-        var product1 = new Product("Laptop", "High-performance laptop", 2999.99, 10, List.of("laptop1.jpg", "laptop2.jpg"));
+        var product1 = new Product("Laptop", "High-performance laptop", 2999.99, 10,
+                List.of("laptop1.jpg", "laptop2.jpg"));
         var product2 = new Product("Mouse", "Wireless mouse", 49.99, 50, List.of("mouse.jpg"));
         var product3 = new Product("Keyboard", "Mechanical keyboard", 129.99, 30, List.of("keyboard.jpg"));
 
@@ -46,7 +48,8 @@ public class ExtentPersistenceExample {
         List<Product> extent = Product.getExtent();
         System.out.println("Current Product extent size: " + extent.size());
         System.out.println("Products in extent:");
-        extent.forEach(p -> System.out.println("  - " + p.getName() + " (Price: " + p.getPrice() + ", Rating: " + p.getAvgRating() + ")"));
+        extent.forEach(p -> System.out
+                .println("  - " + p.getName() + " (Price: " + p.getPrice() + ", Rating: " + p.getAvgRating() + ")"));
 
         // Save extent to file
         try {
@@ -60,7 +63,8 @@ public class ExtentPersistenceExample {
             List<Product> loadedExtent = Product.getExtent();
             System.out.println("Product extent size after loading: " + loadedExtent.size());
             System.out.println("Loaded products:");
-            loadedExtent.forEach(p -> System.out.println("  - " + p.getName() + " (Price: " + p.getPrice() + ", Rating: " + p.getAvgRating() + ")"));
+            loadedExtent.forEach(p -> System.out.println(
+                    "  - " + p.getName() + " (Price: " + p.getPrice() + ", Rating: " + p.getAvgRating() + ")"));
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error during Product persistence: " + e.getMessage());
         }
@@ -77,10 +81,11 @@ public class ExtentPersistenceExample {
         var computers = new Category("Computers", "Computer hardware and software", electronics);
         var phones = new Category("Phones", "Mobile phones and accessories", electronics);
         var clothing = new Category("Clothing", "Clothing and fashion items", null);
-        
+
         // Verify hierarchy
         System.out.println("Category hierarchy created:");
-        System.out.println("  - " + electronics.getName() + " has " + electronics.getSubCategories().size() + " subcategories");
+        System.out.println(
+                "  - " + electronics.getName() + " has " + electronics.getSubCategories().size() + " subcategories");
         System.out.println("  - " + computers.getName() + " parent: " + computers.getParentCategory().getName());
         System.out.println("  - " + phones.getName() + " parent: " + phones.getParentCategory().getName());
         System.out.println("  - " + clothing.getName() + " is a top-level category");
@@ -126,20 +131,23 @@ public class ExtentPersistenceExample {
 
         // Create orders
         System.out.println("Creating orders...");
-        var order1 = new Order(LocalDateTime.now().minusDays(5), OrderStatus.PAYMENT_PENDING);
-        order1.addItem(product1);
+        var customer = new Customer("Demo User", "demo@example.com");
+
+        var order1 = new Order(customer, product1, 1);
+        // product1 already added in constructor
         order1.addItem(product2);
         order1.calculateTotal();
 
-        var order2 = new Order(LocalDateTime.now().minusDays(2), OrderStatus.COMPLETE);
-        order2.addItem(product1);
+        var order2 = new Order(customer, product1, 1);
+        order2.changeOrderStatus(OrderStatus.COMPLETE);
         order2.calculateTotal();
 
         // Display extent
         List<Order> extent = Order.getExtent();
         System.out.println("Current Order extent size: " + extent.size());
         System.out.println("Orders in extent:");
-        extent.forEach(o -> System.out.println("  - Order (Status: " + o.getStatus() + ", Total: " + o.getTotalAmount() + ", Items: " + o.getItems().size() + ")"));
+        extent.forEach(o -> System.out.println("  - Order (Status: " + o.getStatus() + ", Total: " + o.getTotalAmount()
+                + ", Items: " + o.getItems().size() + ")"));
 
         // Save extent to file
         try {
@@ -153,7 +161,8 @@ public class ExtentPersistenceExample {
             List<Order> loadedExtent = Order.getExtent();
             System.out.println("Order extent size after loading: " + loadedExtent.size());
             System.out.println("Loaded orders:");
-            loadedExtent.forEach(o -> System.out.println("  - Order (Status: " + o.getStatus() + ", Total: " + o.getTotalAmount() + ", Items: " + o.getItems().size() + ")"));
+            loadedExtent.forEach(o -> System.out.println("  - Order (Status: " + o.getStatus() + ", Total: "
+                    + o.getTotalAmount() + ", Items: " + o.getItems().size() + ")"));
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error during Order persistence: " + e.getMessage());
         }
@@ -161,4 +170,3 @@ public class ExtentPersistenceExample {
         System.out.println();
     }
 }
-

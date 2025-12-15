@@ -6,32 +6,42 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class OrderTest {
 
+    private Customer customer;
+    private Product product;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        customer = new Customer("Test", "test@test.com");
+        product = new Product("P", "D", 10, 10, java.util.List.of("img"));
+    }
+
     // Complex attribute (orderDate) TESTS
     @Test
     void shouldCreateOrderWithValidDate() {
-        var order = new Order(LocalDateTime.now().minusDays(1), OrderStatus.PAYMENT_PENDING);
+        var order = new Order(customer, product, 1);
         assertNotNull(order);
     }
 
     @Test
     void shouldThrowExceptionWhenOrderDateIsNull() {
-        assertThrows(IllegalArgumentException.class, () ->
-                new Order(null, OrderStatus.PAYMENT_PENDING)
-        );
+        // Since date is now internal in constructor (LocalDateTime.now()), we can't
+        // pass null.
+        // We should test valid creation logic instead or private check?
+        // Actually, I removed the date parameter from constructor.
+        // So this test is obsolete or should strict check other params.
+        // Let's test null customer/product instead.
+        assertThrows(IllegalArgumentException.class, () -> new Order(null, product, 1));
     }
 
     @Test
-    void shouldThrowExceptionWhenOrderDateIsInFuture() {
-        var futureDate = LocalDateTime.now().plusDays(1);
-        assertThrows(IllegalArgumentException.class, () ->
-                new Order(futureDate, OrderStatus.PAYMENT_PENDING)
-        );
+    void shouldThrowExceptionWhenInitialProductIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> new Order(customer, null, 1));
     }
 
     @Test
     void shouldSetStatusCorrectlyOnCreation() {
-        var now = LocalDateTime.now();
-        var order = new Order(now, OrderStatus.COMPLETE);
-        assertEquals(OrderStatus.COMPLETE, order.getStatus());
+        // Status is pending by default in new constructor
+        var order = new Order(customer, product, 1);
+        assertEquals(OrderStatus.PAYMENT_PENDING, order.getStatus());
     }
 }

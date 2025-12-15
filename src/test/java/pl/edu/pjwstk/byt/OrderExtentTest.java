@@ -22,6 +22,9 @@ public class OrderExtentTest {
         ((List<?>) field.get(null)).clear();
     }
 
+    private Customer customer;
+    private Product product;
+
     @BeforeEach
     void setUp() throws Exception {
         clearExtent();
@@ -30,6 +33,8 @@ public class OrderExtentTest {
         if (file.exists()) {
             file.delete();
         }
+        customer = new Customer("Test", "test@example.com");
+        product = new Product("P", "D", 10.0, 10, List.of("img"));
     }
 
     @AfterEach
@@ -45,18 +50,19 @@ public class OrderExtentTest {
     @Test
     void getExtent_afterCreatingOrders_returnsAllOrders() {
         // given
-        var order1 = new Order(LocalDateTime.now().minusDays(1), OrderStatus.PAYMENT_PENDING);
-        var order2 = new Order(LocalDateTime.now().minusDays(2), OrderStatus.COMPLETE);
-        var order3 = new Order(LocalDateTime.now().minusDays(3), OrderStatus.SHIPPED);
+        var order1 = new Order(customer, product, 1);
+        var order2 = new Order(customer, product, 2);
+
+        // Wait, Order.getExtent() returns all orders.
+        // If we create orders, they are added.
 
         // when
         var extent = Order.getExtent();
 
         // then
-        assertEquals(3, extent.size());
+        assertEquals(2, extent.size());
         assertTrue(extent.contains(order1));
         assertTrue(extent.contains(order2));
-        assertTrue(extent.contains(order3));
     }
 
     @Test
@@ -72,7 +78,7 @@ public class OrderExtentTest {
     @Test
     void getExtent_returnsCopy_notOriginalList() {
         // given
-        var order = new Order(LocalDateTime.now().minusDays(1), OrderStatus.PAYMENT_PENDING);
+        var order = new Order(customer, product, 1);
         var extent1 = Order.getExtent();
         int originalSize = extent1.size();
 
@@ -88,8 +94,8 @@ public class OrderExtentTest {
     @Test
     void saveExtent_afterCreatingOrders_savesToFile() throws IOException {
         // given
-        var order1 = new Order(LocalDateTime.now().minusDays(1), OrderStatus.PAYMENT_PENDING);
-        var order2 = new Order(LocalDateTime.now().minusDays(2), OrderStatus.COMPLETE);
+        var order1 = new Order(customer, product, 1);
+        var order2 = new Order(customer, product, 2);
 
         // when
         Order.saveExtent();
@@ -103,8 +109,12 @@ public class OrderExtentTest {
     @Test
     void loadExtent_afterSaving_loadsAllOrders() throws Exception {
         // given
-        var order1 = new Order(LocalDateTime.now().minusDays(1), OrderStatus.PAYMENT_PENDING);
-        var order2 = new Order(LocalDateTime.now().minusDays(2), OrderStatus.COMPLETE);
+        var order1 = new Order(customer, product, 1);
+        order1.changeOrderStatus(OrderStatus.PAYMENT_PENDING);
+
+        var order2 = new Order(customer, product, 2);
+        order2.changeOrderStatus(OrderStatus.COMPLETE);
+
         Order.saveExtent();
 
         clearExtent();
@@ -115,6 +125,9 @@ public class OrderExtentTest {
 
         // then
         assertEquals(2, loadedExtent.size());
+        // Since load order works by serialization, order1 might be first or second
+        // depending on list order.
+        // List order is insertion order.
         assertEquals(OrderStatus.PAYMENT_PENDING, loadedExtent.get(0).getStatus());
         assertEquals(OrderStatus.COMPLETE, loadedExtent.get(1).getStatus());
     }
@@ -128,12 +141,13 @@ public class OrderExtentTest {
     @Test
     void saveAndLoadExtent_preservesOrderAttributes() throws Exception {
         // given
-        var orderDate = LocalDateTime.now().minusDays(5);
-        var order = new Order(orderDate, OrderStatus.PAYMENT_PENDING);
+        var order = new Order(customer, product, 1);
         order.changeOrderStatus(OrderStatus.COMPLETE);
-        var product = new Product("Test Product", "Test Description", 15.5, 20, List.of("test.jpg"));
-        order.addItem(product);
+
+        var newProduct = new Product("Test Product", "Test Description", 15.5, 20, List.of("test.jpg"));
+        order.addProduct(newProduct, 1);
         order.calculateTotal();
+
         Order.saveExtent();
 
         clearExtent();
@@ -146,7 +160,6 @@ public class OrderExtentTest {
         assertEquals(1, loadedExtent.size());
         var loadedOrder = loadedExtent.get(0);
         assertEquals(OrderStatus.COMPLETE, loadedOrder.getStatus());
-        assertEquals(1, loadedOrder.getItems().size());
+        assertEquals(2, loadedOrder.getItems().size());
     }
 }
-
