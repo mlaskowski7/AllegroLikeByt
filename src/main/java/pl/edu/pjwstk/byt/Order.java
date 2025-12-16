@@ -129,7 +129,7 @@ public class Order implements Serializable {
     }
 
     public List<OrderItem> getItems() {
-        return new ArrayList<>(items);
+        return Collections.unmodifiableList(items);
     }
 
     // Optional: Legacy support or helper
