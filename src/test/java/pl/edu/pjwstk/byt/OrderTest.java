@@ -10,11 +10,17 @@ public class OrderTest {
     private Product product;
 
     @org.junit.jupiter.api.BeforeEach
-    void setUp() {
-        Customer.clearExtent();
-        Product.clearExtent();
+    void setUp() throws Exception {
+        clearExtent(Customer.class);
+        clearExtent(Product.class);
         customer = new Customer("Test", "test@test.com");
         product = new Product("P", "D", 10, 10, java.util.List.of("img"));
+    }
+
+    private void clearExtent(Class<?> clazz) throws Exception {
+        java.lang.reflect.Field field = clazz.getDeclaredField("extent");
+        field.setAccessible(true);
+        ((java.util.List<?>) field.get(null)).clear();
     }
 
     // Complex attribute (orderDate) TESTS
@@ -25,13 +31,7 @@ public class OrderTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenOrderDateIsNull() {
-        // Since date is now internal in constructor (LocalDateTime.now()), we can't
-        // pass null.
-        // We should test valid creation logic instead or private check?
-        // Actually, I removed the date parameter from constructor.
-        // So this test is obsolete or should strict check other params.
-        // Let's test null customer/product instead.
+    void shouldThrowExceptionWhenCustomerIsNull() {
         assertThrows(IllegalArgumentException.class, () -> new Order(null, product, 1));
     }
 

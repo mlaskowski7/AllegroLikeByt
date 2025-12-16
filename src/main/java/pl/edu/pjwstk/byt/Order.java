@@ -3,6 +3,7 @@ package pl.edu.pjwstk.byt;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Order implements Serializable {
@@ -29,7 +30,7 @@ public class Order implements Serializable {
             throw new IllegalArgumentException("Quantity must be positive");
 
         this.status = OrderStatus.PAYMENT_PENDING;
-        this.orderDate = LocalDateTime.now(); // Default or passed? Assuming current for new order
+        this.orderDate = LocalDateTime.now();
         this.totalAmount = 0;
         this.items = new ArrayList<>();
 
@@ -72,7 +73,8 @@ public class Order implements Serializable {
     }
 
     /**
-     * Internal method to set the customer without triggering the reverse association.
+     * Internal method to set the customer without triggering the reverse
+     * association.
      * Should only be called from Customer.addOrderInternal.
      */
     protected void setCustomerInternal(Customer customer) {
@@ -99,23 +101,10 @@ public class Order implements Serializable {
     protected void removeOrderItemInternal(OrderItem item) {
         // Enforce multiplicity 1..*
         if (items.size() <= 1 && items.contains(item)) {
-            // If we are destroying the order, we allow this?
-            // Usually constraint applies to "live" object.
-            // But if we delete the order, we remove all items.
-            // We need a flag or check if we are in delete process?
-            // Or simply: Order cannot exist with 0 items.
-            // Exception: unless the Order itself is being deleted.
-            // For now, simpler check:
             throw new IllegalStateException("Cannot remove the last item from the order");
         }
         items.remove(item);
         calculateTotal();
-    }
-
-    // Special internal method for deletion
-    private void removeOrderItemInternalForDelete(OrderItem item) {
-        items.remove(item);
-        // No total recalc needed really
     }
 
     public void removeOrderItem(OrderItem item) {

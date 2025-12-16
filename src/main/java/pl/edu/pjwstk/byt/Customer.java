@@ -36,6 +36,12 @@ public class Customer implements Serializable {
         }
     }
 
+    protected void addOrderInternal(Order order) {
+        if (!orders.contains(order)) {
+            orders.add(order);
+        }
+    }
+
     public void removeOrder(Order order) {
         if (order == null)
             throw new IllegalArgumentException("Order cannot be null");
