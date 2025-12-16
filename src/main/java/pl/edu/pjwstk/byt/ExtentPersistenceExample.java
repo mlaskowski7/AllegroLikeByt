@@ -156,7 +156,7 @@ public class ExtentPersistenceExample {
             System.out.println("Saving extents...");
             Product.saveExtent();
             Category.saveExtent();
-            User.saveExtent();
+            Customer.saveExtent();
             Order.saveExtent();
             // OrderItem.saveExtent(); // Usually handled? Explicitly for safety
             OrderItem.saveExtent();
@@ -168,11 +168,11 @@ public class ExtentPersistenceExample {
             // But we can reload into new process logic or just inspect files.
             // For this example, let's just Load back and see if counts match.
 
-            // Load Extents
+            // 8. Load Extents
             System.out.println("Loading extents...");
             Product.loadExtent();
             Category.loadExtent();
-            User.loadExtent();
+            Customer.loadExtent();
             OrderItem.loadExtent();
             Order.loadExtent();
 
