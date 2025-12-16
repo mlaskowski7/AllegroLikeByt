@@ -30,7 +30,9 @@ public class Customer implements Serializable {
         if (!orders.contains(order)) {
             orders.add(order);
             // Reverse connection
-            order.setCustomer(this);
+            if (order.getCustomer() != this) {
+                order.setCustomer(this);
+            }
         }
     }
 
