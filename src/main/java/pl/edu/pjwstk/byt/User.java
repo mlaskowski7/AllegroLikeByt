@@ -4,16 +4,16 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Customer implements Serializable {
+public class User implements Serializable {
     private static final long serialVersionUID = 1L;
-    private static final String EXTENT_FILE = "Customer_extent.ser";
-    private static List<Customer> extent = new ArrayList<>();
+    private static final String EXTENT_FILE = "User_extent.ser";
+    private static List<User> extent = new ArrayList<>();
 
     private String name;
     private String email;
     private List<Order> orders = new ArrayList<>();
 
-    public Customer(String name, String email) {
+    public User(String name, String email) {
         if (name == null || name.isBlank())
             throw new IllegalArgumentException("Name cannot be empty");
         if (email == null || email.isBlank())
@@ -30,8 +30,8 @@ public class Customer implements Serializable {
         if (!orders.contains(order)) {
             orders.add(order);
             // Reverse connection
-            if (order.getCustomer() != this) {
-                order.setCustomer(this);
+            if (order.getUser() != this) {
+                order.setUser(this);
             }
         }
     }
@@ -47,11 +47,11 @@ public class Customer implements Serializable {
             throw new IllegalArgumentException("Order cannot be null");
 
         // If the order is still linked to us, deleting it is the only way to remove it
-        // because Order requires a Customer (multiplicity 1).
-        if (order.getCustomer() == this) {
+        // because Order requires a User (multiplicity 1).
+        if (order.getUser() == this) {
             order.delete();
         } else {
-            // If already unlinked (e.g. called from Order.delete() or Order.setCustomer()),
+            // If already unlinked (e.g. called from Order.delete() or Order.setUser()),
             // just remove from implementation list.
             orders.remove(order);
         }
@@ -70,7 +70,7 @@ public class Customer implements Serializable {
     }
 
     // Persistence
-    public static List<Customer> getExtent() {
+    public static List<User> getExtent() {
         return new ArrayList<>(extent);
     }
 
@@ -83,7 +83,7 @@ public class Customer implements Serializable {
     @SuppressWarnings("unchecked")
     public static void loadExtent() throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(EXTENT_FILE))) {
-            extent = (List<Customer>) ois.readObject();
+            extent = (List<User>) ois.readObject();
         }
     }
 }

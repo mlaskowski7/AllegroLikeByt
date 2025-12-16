@@ -6,14 +6,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class OrderTest {
 
-    private Customer customer;
+    private User user;
     private Product product;
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() throws Exception {
-        clearExtent(Customer.class);
+        clearExtent(User.class);
         clearExtent(Product.class);
-        customer = new Customer("Test", "test@test.com");
+        user = new User("Test", "test@test.com");
         product = new Product("P", "D", 10, 10, java.util.List.of("img"));
     }
 
@@ -26,24 +26,24 @@ public class OrderTest {
     // Complex attribute (orderDate) TESTS
     @Test
     void shouldCreateOrderWithValidDate() {
-        var order = new Order(customer, product, 1);
+        var order = new Order(user, product, 1);
         assertNotNull(order);
     }
 
     @Test
-    void shouldThrowExceptionWhenCustomerIsNull() {
+    void shouldThrowExceptionWhenUserIsNull() {
         assertThrows(IllegalArgumentException.class, () -> new Order(null, product, 1));
     }
 
     @Test
     void shouldThrowExceptionWhenInitialProductIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> new Order(customer, null, 1));
+        assertThrows(IllegalArgumentException.class, () -> new Order(user, null, 1));
     }
 
     @Test
     void shouldSetStatusCorrectlyOnCreation() {
         // Status is pending by default in new constructor
-        var order = new Order(customer, product, 1);
+        var order = new Order(user, product, 1);
         assertEquals(OrderStatus.PAYMENT_PENDING, order.getStatus());
     }
 }

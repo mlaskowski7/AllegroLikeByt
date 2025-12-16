@@ -129,37 +129,45 @@ public class ExtentPersistenceExample {
         var product1 = new Product("Product A", "Description A", 100.0, 10, List.of("a.jpg"));
         var product2 = new Product("Product B", "Description B", 200.0, 20, List.of("b.jpg"));
 
-        // Create orders
-        System.out.println("Creating orders...");
-        var customer = new Customer("Demo User", "demo@example.com");
+        // 4. Create User (Basic Assoc with Order)
+        System.out.println("Creating User...");
+        User alice = new User("Alice", "alice@example.com");
 
-        var order1 = new Order(customer, product1, 1);
-        // product1 already added in constructor
-        order1.addItem(product2);
-        order1.calculateTotal();
+        // 5. Create Order (Requires User, Product)
+        System.out.println("Creating Order...");
+        Order order1 = new Order(alice, product1, 2); // 2x Product1
 
-        var order2 = new Order(customer, product1, 1);
-        order2.changeOrderStatus(OrderStatus.COMPLETE);
-        order2.calculateTotal();
+        // Add another product to order (Composition)
+        order1.addProduct(product2, 1);
 
-        // Display extent
-        List<Order> extent = Order.getExtent();
-        System.out.println("Current Order extent size: " + extent.size());
-        System.out.println("Orders in extent:");
-        extent.forEach(o -> System.out.println("  - Order (Status: " + o.getStatus() + ", Total: " + o.getTotalAmount()
-                + ", Items: " + o.getItems().size() + ")"));
+        System.out.println("Original Order Total: " + order1.getTotalAmount()); // 2*25.0 + 1*100.0 = 150.0
 
-        // Save extent to file
+        // 6. Save Extents
         try {
-            System.out.println("\nSaving Order extent to file...");
+            System.out.println("Saving extents...");
+            Product.saveExtent();
+            Category.saveExtent();
+            User.saveExtent();
             Order.saveExtent();
-            System.out.println("Order extent saved successfully!");
+            // OrderItem.saveExtent(); // Usually handled? Explicitly for safety
+            OrderItem.saveExtent();
+            System.out.println("Extents saved successfully!");
 
-            // Load extent from file
-            System.out.println("\nLoading Order extent from file...");
+            // 7. Clear memory (Simulate restart)
+            System.out.println("Clearing memory...");
+            // Not easily possible to clear static lists without methods or reflection here.
+            // But we can reload into new process logic or just inspect files.
+            // For this example, let's just Load back and see if counts match.
+
+            // Load Extents
+            System.out.println("Loading extents...");
+            Product.loadExtent();
+            Category.loadExtent();
+            User.loadExtent();
+            OrderItem.loadExtent();
             Order.loadExtent();
+
             List<Order> loadedExtent = Order.getExtent();
-            System.out.println("Order extent size after loading: " + loadedExtent.size());
             System.out.println("Loaded orders:");
             loadedExtent.forEach(o -> System.out.println("  - Order (Status: " + o.getStatus() + ", Total: "
                     + o.getTotalAmount() + ", Items: " + o.getItems().size() + ")"));
