@@ -149,17 +149,34 @@ public class ExtentPersistenceExample {
         extent.forEach(o -> System.out.println("  - Order (Status: " + o.getStatus() + ", Total: " + o.getTotalAmount()
                 + ", Items: " + o.getItems().size() + ")"));
 
-        // Save extent to file
-        try {
-            System.out.println("\nSaving Order extent to file...");
-            Order.saveExtent();
-            System.out.println("Order extent saved successfully!");
+        System.out.println("Original Order Total: " + order1.getTotalAmount()); // 2*25.0 + 1*100.0 = 150.0
 
-            // Load extent from file
-            System.out.println("\nLoading Order extent from file...");
+        // 6. Save Extents
+        try {
+            System.out.println("Saving extents...");
+            Product.saveExtent();
+            Category.saveExtent();
+            Customer.saveExtent();
+            Order.saveExtent();
+            // OrderItem.saveExtent(); // Usually handled? Explicitly for safety
+            OrderItem.saveExtent();
+            System.out.println("Extents saved successfully!");
+
+            // 7. Clear memory (Simulate restart)
+            System.out.println("Clearing memory...");
+            // Not easily possible to clear static lists without methods or reflection here.
+            // But we can reload into new process logic or just inspect files.
+            // For this example, let's just Load back and see if counts match.
+
+            // 8. Load Extents
+            System.out.println("Loading extents...");
+            Product.loadExtent();
+            Category.loadExtent();
+            Customer.loadExtent();
+            OrderItem.loadExtent();
             Order.loadExtent();
+
             List<Order> loadedExtent = Order.getExtent();
-            System.out.println("Order extent size after loading: " + loadedExtent.size());
             System.out.println("Loaded orders:");
             loadedExtent.forEach(o -> System.out.println("  - Order (Status: " + o.getStatus() + ", Total: "
                     + o.getTotalAmount() + ", Items: " + o.getItems().size() + ")"));

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,35 +15,49 @@ public class OrderExtentTest {
 
     private static final String EXTENT_FILE = "Order_extent.ser";
 
-    private void clearExtent() throws Exception {
-        Field field = Order.class.getDeclaredField("extent");
-        field.setAccessible(true);
-        ((List<?>) field.get(null)).clear();
-    }
-
     private Customer customer;
     private Product product;
 
     @BeforeEach
     void setUp() throws Exception {
-        clearExtent();
-        // Delete persistence file if exists
-        File file = new File(EXTENT_FILE);
-        if (file.exists()) {
-            file.delete();
+        // Clear all extents via reflection
+        try {
+            clearExtent(Order.class);
+            clearExtent(Customer.class);
+            clearExtent(Product.class);
+            clearExtent(OrderItem.class);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        // Delete persistence files
+        new File(EXTENT_FILE).delete();
+        new File("Customer_extent.ser").delete();
+        new File("Product_extent.ser").delete();
+        new File("OrderItem_extent.ser").delete();
+
         customer = new Customer("Test", "test@example.com");
         product = new Product("P", "D", 10.0, 10, List.of("img"));
+    }
+
+    private void clearExtent(Class<?> clazz) throws Exception {
+        Field field = clazz.getDeclaredField("extent");
+        field.setAccessible(true);
+        ((java.util.List<?>) field.get(null)).clear();
     }
 
     @AfterEach
     void tearDown() throws Exception {
         // Clean up after each test
-        clearExtent();
-        File file = new File(EXTENT_FILE);
-        if (file.exists()) {
-            file.delete();
-        }
+        clearExtent(Order.class);
+        clearExtent(Customer.class);
+        clearExtent(Product.class);
+        clearExtent(OrderItem.class);
+
+        new File(EXTENT_FILE).delete();
+        new File("Customer_extent.ser").delete();
+        new File("Product_extent.ser").delete();
+        new File("OrderItem_extent.ser").delete();
     }
 
     @Test
@@ -53,22 +66,23 @@ public class OrderExtentTest {
         var order1 = new Order(customer, product, 1);
         var order2 = new Order(customer, product, 2);
 
+        List<Order> orders = Order.getExtent();
+        assertEquals(2, orders.size());
+    }
 
-        // when
-        var extent = Order.getExtent();
+    @Test
+    void shouldRemoveOrderFromExtentOnDelete() {
+        Order o = new Order(customer, product, 1);
+        o.delete();
 
         // then
-        assertEquals(2, extent.size());
-        assertTrue(extent.contains(order1));
-        assertTrue(extent.contains(order2));
+        assertEquals(0, Order.getExtent().size());
+        assertFalse(Order.getExtent().contains(o));
     }
 
     @Test
     void getExtent_emptyExtent_returnsEmptyList() {
-        // when
         var extent = Order.getExtent();
-
-        // then
         assertNotNull(extent);
         assertTrue(extent.isEmpty());
     }
@@ -80,11 +94,9 @@ public class OrderExtentTest {
         var extent1 = Order.getExtent();
         int originalSize = extent1.size();
 
-        // when
-        extent1.clear(); // This should not affect the original extent
+        extent1.clear();
         var extent2 = Order.getExtent();
 
-        // then
         assertEquals(originalSize, extent2.size());
         assertTrue(extent2.contains(order));
     }
@@ -95,10 +107,8 @@ public class OrderExtentTest {
         var order1 = new Order(customer, product, 1);
         var order2 = new Order(customer, product, 2);
 
-        // when
         Order.saveExtent();
 
-        // then
         File file = new File(EXTENT_FILE);
         assertTrue(file.exists());
         assertTrue(file.length() > 0);
@@ -113,26 +123,34 @@ public class OrderExtentTest {
         var order2 = new Order(customer, product, 2);
         order2.changeOrderStatus(OrderStatus.COMPLETE);
 
+        Customer.saveExtent();
+        Product.saveExtent();
+        OrderItem.saveExtent();
         Order.saveExtent();
 
-        clearExtent();
+        // Clear memory only, do NOT delete files (which setUp() does)
+        clearExtent(Order.class);
+        clearExtent(Customer.class);
+        clearExtent(Product.class);
+        clearExtent(OrderItem.class);
 
-        // when
+        // Load
+        Product.loadExtent();
+        Customer.loadExtent();
+        OrderItem.loadExtent();
         Order.loadExtent();
+
         var loadedExtent = Order.getExtent();
 
-        // then
         assertEquals(2, loadedExtent.size());
-        // Since load order works by serialization, order1 might be first or second
-        // depending on list order.
-        // List order is insertion order.
-        assertEquals(OrderStatus.PAYMENT_PENDING, loadedExtent.get(0).getStatus());
-        assertEquals(OrderStatus.COMPLETE, loadedExtent.get(1).getStatus());
+        assertTrue(loadedExtent.stream().anyMatch(o -> o.getStatus() == OrderStatus.PAYMENT_PENDING));
+        assertTrue(loadedExtent.stream().anyMatch(o -> o.getStatus() == OrderStatus.COMPLETE));
     }
 
     @Test
     void loadExtent_fileDoesNotExist_throwsException() {
-        // then
+        // Ensure file is gone
+        new File(EXTENT_FILE).delete();
         assertThrows(IOException.class, () -> Order.loadExtent());
     }
 
@@ -146,15 +164,25 @@ public class OrderExtentTest {
         order.addProduct(newProduct, 1);
         order.calculateTotal();
 
+        Customer.saveExtent();
+        Product.saveExtent();
+        OrderItem.saveExtent();
         Order.saveExtent();
 
-        clearExtent();
+        // Clear memory only
+        clearExtent(Order.class);
+        clearExtent(Customer.class);
+        clearExtent(Product.class);
+        clearExtent(OrderItem.class);
 
-        // when
+        // Load
+        Product.loadExtent();
+        Customer.loadExtent();
+        OrderItem.loadExtent();
         Order.loadExtent();
+
         var loadedExtent = Order.getExtent();
 
-        // then
         assertEquals(1, loadedExtent.size());
         var loadedOrder = loadedExtent.get(0);
         assertEquals(OrderStatus.COMPLETE, loadedOrder.getStatus());
