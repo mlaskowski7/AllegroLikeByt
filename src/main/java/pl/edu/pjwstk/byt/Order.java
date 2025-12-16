@@ -67,9 +67,17 @@ public class Order implements Serializable {
         }
 
         this.customer = customer;
-        this.customer.addOrder(this);
+        // Use internal method to avoid infinite recursion
+        this.customer.addOrderInternal(this);
     }
 
+    /**
+     * Internal method to set the customer without triggering the reverse association.
+     * Should only be called from Customer.addOrderInternal.
+     */
+    protected void setCustomerInternal(Customer customer) {
+        this.customer = customer;
+    }
     // We remove 'removeCustomer' public method because multiplicity is 1.
     // However, for destruction (delete), we might need internal cleanup.
 
