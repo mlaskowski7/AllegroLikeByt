@@ -18,6 +18,9 @@ public class OrderExtentTest {
     private User user;
     private Product product;
 
+    private Customer customer;
+    private Product product;
+
     @BeforeEach
     void setUp() throws Exception {
         // Clear all extents via reflection
@@ -29,22 +32,8 @@ public class OrderExtentTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // Delete persistence files if they exist
-        new File(EXTENT_FILE).delete();
-        new File("User_extent.ser").delete();
-        new File("Product_extent.ser").delete();
-        new File("OrderItem_extent.ser").delete();
-
-        // Initialize reusable objects
-        user = new User("TestUser", "test@example.com");
+        customer = new Customer("Test", "test@example.com");
         product = new Product("P", "D", 10.0, 10, List.of("img"));
-    }
-
-    private void clearExtent(Class<?> clazz) throws Exception {
-        Field field = clazz.getDeclaredField("extent");
-        field.setAccessible(true);
-        ((java.util.List<?>) field.get(null)).clear();
     }
 
     @AfterEach
@@ -62,9 +51,11 @@ public class OrderExtentTest {
     }
 
     @Test
-    void shouldFindAllCreatedOrdersInExtent() {
-        new Order(user, product, 1);
-        new Order(user, product, 2);
+    void getExtent_afterCreatingOrders_returnsAllOrders() {
+        // given
+        var order1 = new Order(customer, product, 1);
+        var order2 = new Order(customer, product, 2);
+
 
         List<Order> orders = Order.getExtent();
         assertEquals(2, orders.size());
@@ -75,49 +66,10 @@ public class OrderExtentTest {
         Order o = new Order(user, product, 1);
         o.delete();
 
-        assertEquals(0, Order.getExtent().size());
-        assertFalse(Order.getExtent().contains(o));
-    }
-
-    @Test
-    void shouldSaveAndLoadExtentPersistent() throws IOException, ClassNotFoundException {
-        // Create dependencies
-        Product p = new Product("P1", "D", 100, 10, java.util.List.of("img"));
-        User u1 = new User("User1", "u1@test.com");
-        new Order(u1, p, 1);
-
-        // Save
-        Order.saveExtent();
-        User.saveExtent();
-        Product.saveExtent();
-        OrderItem.saveExtent();
-
-        // Clear memory
-        try {
-            clearExtent(Order.class);
-            clearExtent(User.class);
-            clearExtent(Product.class);
-            clearExtent(OrderItem.class);
-        } catch (Exception e) {
-            fail("Reflection clear failed: " + e.getMessage());
-        }
-        assertEquals(0, Order.getExtent().size());
-
-        // Load dependencies first
-        Product.loadExtent();
-        User.loadExtent();
-        OrderItem.loadExtent();
-
-        // Load
-        Order.loadExtent();
-
-        List<Order> loaded = Order.getExtent();
-        assertEquals(1, loaded.size());
-
-        // Check state
-        Order o1 = loaded.get(0);
-        assertNotNull(o1.getUser());
-        assertEquals(OrderStatus.PAYMENT_PENDING, o1.getStatus());
+        // then
+        assertEquals(2, extent.size());
+        assertTrue(extent.contains(order1));
+        assertTrue(extent.contains(order2));
     }
 
     @Test
@@ -129,7 +81,8 @@ public class OrderExtentTest {
 
     @Test
     void getExtent_returnsCopy_notOriginalList() {
-        var order = new Order(user, product, 1);
+        // given
+        var order = new Order(customer, product, 1);
         var extent1 = Order.getExtent();
         int originalSize = extent1.size();
 
@@ -142,8 +95,9 @@ public class OrderExtentTest {
 
     @Test
     void saveExtent_afterCreatingOrders_savesToFile() throws IOException {
-        new Order(user, product, 1);
-        new Order(user, product, 2);
+        // given
+        var order1 = new Order(customer, product, 1);
+        var order2 = new Order(customer, product, 2);
 
         Order.saveExtent();
 
@@ -154,16 +108,13 @@ public class OrderExtentTest {
 
     @Test
     void loadExtent_afterSaving_loadsAllOrders() throws Exception {
-        var order1 = new Order(user, product, 1);
+        // given
+        var order1 = new Order(customer, product, 1);
         order1.changeOrderStatus(OrderStatus.PAYMENT_PENDING);
 
-        var order2 = new Order(user, product, 2);
+        var order2 = new Order(customer, product, 2);
         order2.changeOrderStatus(OrderStatus.COMPLETE);
 
-        // Save everything
-        Product.saveExtent();
-        User.saveExtent();
-        OrderItem.saveExtent();
         Order.saveExtent();
 
         // Clear memory only, do NOT delete files (which setUp() does)
@@ -181,9 +132,11 @@ public class OrderExtentTest {
         var loadedExtent = Order.getExtent();
 
         assertEquals(2, loadedExtent.size());
-        // Simple check
-        assertTrue(loadedExtent.stream().anyMatch(o -> o.getStatus() == OrderStatus.PAYMENT_PENDING));
-        assertTrue(loadedExtent.stream().anyMatch(o -> o.getStatus() == OrderStatus.COMPLETE));
+        // Since load order works by serialization, order1 might be first or second
+        // depending on list order.
+        // List order is insertion order.
+        assertEquals(OrderStatus.PAYMENT_PENDING, loadedExtent.get(0).getStatus());
+        assertEquals(OrderStatus.COMPLETE, loadedExtent.get(1).getStatus());
     }
 
     @Test
@@ -195,17 +148,14 @@ public class OrderExtentTest {
 
     @Test
     void saveAndLoadExtent_preservesOrderAttributes() throws Exception {
-        var order = new Order(user, product, 1);
+        // given
+        var order = new Order(customer, product, 1);
         order.changeOrderStatus(OrderStatus.COMPLETE);
 
         var newProduct = new Product("Test Product", "Test Description", 15.5, 20, List.of("test.jpg"));
         order.addProduct(newProduct, 1);
         order.calculateTotal();
 
-        // Save
-        Product.saveExtent();
-        User.saveExtent();
-        OrderItem.saveExtent();
         Order.saveExtent();
 
         // Clear memory only

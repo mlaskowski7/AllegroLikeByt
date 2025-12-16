@@ -18,12 +18,12 @@ public class Order implements Serializable {
     // Composition: Order (Whole) <-> OrderItem (Part)
     private List<OrderItem> items;
 
-    // Basic Association: User (1) <-> Order (*)
-    private User user;
+    // Basic Association: Customer (1) <-> Order (*)
+    private Customer customer;
 
-    public Order(User user, Product initialProduct, int initialQuantity) {
-        if (user == null)
-            throw new IllegalArgumentException("Order must have a user");
+    public Order(Customer customer, Product initialProduct, int initialQuantity) {
+        if (customer == null)
+            throw new IllegalArgumentException("Order must have a customer");
         if (initialProduct == null)
             throw new IllegalArgumentException("Order must have at least one product");
         if (initialQuantity <= 0)
@@ -34,8 +34,8 @@ public class Order implements Serializable {
         this.totalAmount = 0;
         this.items = new ArrayList<>();
 
-        // Basic Association: User (1)
-        setUser(user);
+        // Basic Association: Customer (1)
+        setCustomer(customer);
 
         // Composition: Items (1..*)
         // We create the first item.
@@ -45,42 +45,42 @@ public class Order implements Serializable {
     }
 
     // ------------------------------------------------------------------------
-    // Basic Association: User
+    // Basic Association: Customer
     // ------------------------------------------------------------------------
 
-    public User getUser() {
-        return user;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setUser(User user) {
-        if (user == null) {
-            throw new IllegalArgumentException("Order must have a user (multiplicity 1)");
+    public void setCustomer(Customer customer) {
+        if (customer == null) {
+            throw new IllegalArgumentException("Order must have a customer (multiplicity 1)");
         }
-        if (this.user == user) {
+        if (this.customer == customer) {
             return;
         }
 
-        User oldUser = this.user;
-        this.user = null; // Decouple
+        Customer oldCustomer = this.customer;
+        this.customer = null; // Decouple
 
-        if (oldUser != null) {
-            oldUser.removeOrder(this);
+        if (oldCustomer != null) {
+            oldCustomer.removeOrder(this);
         }
 
-        this.user = user;
+        this.customer = customer;
         // Use internal method to avoid infinite recursion
-        this.user.addOrderInternal(this);
+        this.customer.addOrderInternal(this);
     }
 
     /**
-     * Internal method to set the user without triggering the reverse
+     * Internal method to set the customer without triggering the reverse
      * association.
-     * Should only be called from User.addOrderInternal.
+     * Should only be called from Customer.addOrderInternal.
      */
-    protected void setUserInternal(User user) {
-        this.user = user;
+    protected void setCustomerInternal(Customer customer) {
+        this.customer = customer;
     }
-    // We remove 'removeUser' public method because multiplicity is 1.
+    // We remove 'removeCustomer' public method because multiplicity is 1.
     // However, for destruction (delete), we might need internal cleanup.
 
     // ------------------------------------------------------------------------
@@ -175,11 +175,11 @@ public class Order implements Serializable {
             item.disposeWithoutRemovingFromOrder();
         }
 
-        // Unlink user
-        if (this.user != null) {
-            User u = this.user;
-            this.user = null;
-            u.removeOrder(this);
+        // Unlink customer
+        if (this.customer != null) {
+            Customer c = this.customer;
+            this.customer = null;
+            c.removeOrder(this);
         }
     }
 
