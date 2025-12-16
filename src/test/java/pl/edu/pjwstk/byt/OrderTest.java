@@ -11,6 +11,8 @@ public class OrderTest {
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
+        Customer.clearExtent();
+        Product.clearExtent();
         customer = new Customer("Test", "test@test.com");
         product = new Product("P", "D", 10, 10, java.util.List.of("img"));
     }
