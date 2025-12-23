@@ -3,7 +3,14 @@ package pl.edu.pjwstk.byt;
 import java.util.Date;
 import java.util.List;
 
-public abstract class User {
+import java.io.*;
+import java.util.ArrayList;
+
+public abstract class User implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private static final String EXTENT_FILE = "User_extent.ser";
+    private static List<User> extent = new ArrayList<>();
+
     private String username;
     private String password;
     private String email;
@@ -19,6 +26,24 @@ public abstract class User {
         this.registrationDate = new Date();
         this.isActive = true;
         usercount++;
+        extent.add(this);
+    }
+
+    public static List<User> getExtent() {
+        return new ArrayList<>(extent);
+    }
+
+    public static void saveExtent() throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(EXTENT_FILE))) {
+            oos.writeObject(extent);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void loadExtent() throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(EXTENT_FILE))) {
+            extent = (List<User>) ois.readObject();
+        }
     }
 
     // Overloaded constructor for compatibility if needed, using default password
