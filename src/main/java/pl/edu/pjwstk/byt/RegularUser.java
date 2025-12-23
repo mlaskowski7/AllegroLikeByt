@@ -9,4 +9,37 @@ public class RegularUser extends User {
     protected RegularUser(String username, String email) {
         super(username, email);
     }
+
+    private ShoppingCart shoppingCart;
+
+    public ShoppingCart getShoppingCart() {
+        return shoppingCart;
+    }
+
+    public void setShoppingCart(ShoppingCart shoppingCart) {
+        this.shoppingCart = shoppingCart;
+    }
+
+    public List<String> getShippingAdresses() {
+        return shippingAdresses;
+    }
+
+    public void setShippingAdresses(List<String> shippingAdresses) {
+        this.shippingAdresses = shippingAdresses;
+    }
+
+    public void addFunds(double amount) {
+        // Implementation stub
+        System.out.println("Funds added: " + amount);
+    }
+
+    public void purchasePlan(String planName) {
+        // Implementation stub
+        System.out.println("Plan purchased: " + planName);
+    }
+
+    public void reviewProduct(Product product, String review) {
+        // Implementation stub
+        System.out.println("Product reviewed: " + product + " with review: " + review);
+    }
 }
