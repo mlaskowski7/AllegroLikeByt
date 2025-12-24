@@ -79,4 +79,34 @@ public class RegularUser extends User {
     public void clearShoppingCart() {
         shoppingCart.clearCart();
     }
+
+    private ShoppingCart shoppingCart;
+
+    public ShoppingCart getShoppingCart() {
+        return shoppingCart;
+    }
+
+    public void setShoppingCart(ShoppingCart shoppingCart) {
+        this.shoppingCart = shoppingCart;
+    }
+
+    public List<String> getShippingAdresses() {
+        return shippingAdresses;
+    }
+
+    public void setShippingAdresses(List<String> shippingAdresses) {
+        this.shippingAdresses = shippingAdresses;
+    }
+
+    public void addFunds(double amount) {
+        System.out.println("Funds added: " + amount);
+    }
+
+    public void purchasePlan(String planName) {
+        System.out.println("Plan purchased: " + planName);
+    }
+
+    public void reviewProduct(Product product, String review) {
+        System.out.println("Product reviewed: " + product + " with review: " + review);
+    }
 }
