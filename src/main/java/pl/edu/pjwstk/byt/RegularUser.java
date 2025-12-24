@@ -34,10 +34,17 @@ public class RegularUser extends User {
         shippingAdresses.remove(adress);
     }
 
-    public List<Adress> getAdressList() {
+    public List<Adress> getAddressList() {
         return new ArrayList<>(shippingAdresses);
     }
 
+    /**
+     * @deprecated Use {@link #getAddressList()} instead.
+     */
+    @Deprecated
+    public List<Adress> getAdressList() {
+        return getAddressList();
+    }
     // ----------------------
     // Order Methods (with bidirectional linking)
     // ----------------------
