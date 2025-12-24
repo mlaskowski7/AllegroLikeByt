@@ -5,18 +5,27 @@ import java.util.List;
 
 public class RegularUser extends User {
 
-    private List<Adress> shippingAdresses;
+    private List<Address> shippingAddresses;
     private List<Order> orders;
     private ShoppingCart shoppingCart;
 
-    public RegularUser(String username, String email) {
-        super(username, email);
-        if (username == null || username.isBlank())
+    private static String validateUsername(String username) {
+        if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("Username cannot be empty");
-        if (email == null || email.isBlank())
-            throw new IllegalArgumentException("Email cannot be empty");
+        }
+        return username;
+    }
 
-        this.shippingAdresses = new ArrayList<>();
+    private static String validateEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+        return email;
+    }
+
+    public RegularUser(String username, String email) {
+        super(validateUsername(username), validateEmail(email));
+        this.shippingAddresses = new ArrayList<>();
         this.orders = new ArrayList<>();
         this.shoppingCart = new ShoppingCart();
     }
@@ -24,27 +33,44 @@ public class RegularUser extends User {
     // ----------------------
     // Shipping Address Methods
     // ----------------------
-    public void addShippingAdress(Adress adress) {
-        if (adress != null) {
-            shippingAdresses.add(adress);
+    public void addShippingAddress(Address address) {
+        if (address != null) {
+            shippingAddresses.add(address);
         }
     }
 
-    public void removeShippingAdress(Adress adress) {
-        shippingAdresses.remove(adress);
+    /**
+     * @deprecated Use {@link #addShippingAddress(Address)} instead.
+     */
+    @Deprecated
+    public void addShippingAdress(Address adress) {
+        addShippingAddress(adress);
     }
 
-    public List<Adress> getAddressList() {
-        return new ArrayList<>(shippingAdresses);
+    public void removeShippingAddress(Address address) {
+        shippingAddresses.remove(address);
+    }
+
+    /**
+     * @deprecated Use {@link #removeShippingAddress(Address)} instead.
+     */
+    @Deprecated
+    public void removeShippingAdress(Address adress) {
+        removeShippingAddress(adress);
+    }
+
+    public List<Address> getAddressList() {
+        return new ArrayList<>(shippingAddresses);
     }
 
     /**
      * @deprecated Use {@link #getAddressList()} instead.
      */
     @Deprecated
-    public List<Adress> getAdressList() {
+    public List<Address> getAdressList() {
         return getAddressList();
     }
+
     // ----------------------
     // Order Methods (with bidirectional linking)
     // ----------------------
@@ -69,7 +95,7 @@ public class RegularUser extends User {
         if (order != null && orders.contains(order)) {
             orders.remove(order);
             if (order.getCustomer() == this) {
-                // Since Order requires a Customer (multiplicity 1), removing it from Customer
+                // Since Order requires a RegularUser (multiplicity 1), removing it from RegularUser
                 // implies the Order execution (lifecycle) is over or it's being deleted.
                 order.delete();
             }
@@ -92,20 +118,47 @@ public class RegularUser extends User {
         this.shoppingCart = shoppingCart;
     }
 
-    public List<String> getShippingAdresses() {
+    /**
+     * Returns a list of formatted shipping addresses containing full address information.
+     * Each string includes street, city, zip code, and country.
+     * 
+     * @return list of formatted address strings
+     */
+    public List<String> getShippingAddresses() {
         List<String> addresses = new ArrayList<>();
-        for (Adress addr : shippingAdresses) {
-            addresses.add(addr.getStreet());
+        for (Address addr : shippingAddresses) {
+            addresses.add(addr.formatForShipping());
         }
         return addresses;
     }
 
-    public void setShippingAdresses(List<String> addresses) {
-        this.shippingAdresses.clear();
-        for (String addr : addresses) {
-            // Dummy conversion as implementation detail
-            this.shippingAdresses.add(new Adress(addr, "Unknown", "Unknown", "00-000"));
+    /**
+     * @deprecated Use {@link #getShippingAddresses()} instead.
+     */
+    @Deprecated
+    public List<String> getShippingAdresses() {
+        return getShippingAddresses();
+    }
+
+    /**
+     * Sets the shipping addresses using full {@link Address} domain objects.
+     * This replaces all currently stored shipping addresses.
+     *
+     * @param addresses list of {@link Address} instances to set; if {@code null}, the list is cleared
+     */
+    public void setShippingAddresses(List<Address> addresses) {
+        this.shippingAddresses.clear();
+        if (addresses != null) {
+            this.shippingAddresses.addAll(addresses);
         }
+    }
+
+    /**
+     * @deprecated Use {@link #setShippingAddresses(List)} instead.
+     */
+    @Deprecated
+    public void setShippingAdresses(List<Address> addresses) {
+        setShippingAddresses(addresses);
     }
 
     public void addFunds(double amount) {
@@ -120,3 +173,4 @@ public class RegularUser extends User {
         System.out.println("Product reviewed: " + product + " with review: " + review);
     }
 }
+

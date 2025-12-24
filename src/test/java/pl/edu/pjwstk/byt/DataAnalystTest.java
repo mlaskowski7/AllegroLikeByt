@@ -27,7 +27,7 @@ public class DataAnalystTest {
     @Test
     void shouldAddReport() {
         Report report = new Report();
-        dataAnalyst.addtoReportList(report);
+        dataAnalyst.addToReportList(report);
 
         List<Report> reports = dataAnalyst.getReportList();
         assertEquals(1, reports.size());
@@ -38,8 +38,8 @@ public class DataAnalystTest {
     @Test
     void shouldRemoveReport() {
         Report report = new Report();
-        dataAnalyst.addtoReportList(report);
-        dataAnalyst.delfromReportList(report);
+        dataAnalyst.addToReportList(report);
+        dataAnalyst.deleteFromReportList(report);
 
         List<Report> reports = dataAnalyst.getReportList();
         assertEquals(0, reports.size());
@@ -49,7 +49,7 @@ public class DataAnalystTest {
     @Test
     void removingNonExistingReportShouldNotDecreaseCounter() {
         Report report = new Report();
-        dataAnalyst.delfromReportList(report);
+        dataAnalyst.deleteFromReportList(report);
 
         assertEquals(0, dataAnalyst.getReportsGenerated());
     }

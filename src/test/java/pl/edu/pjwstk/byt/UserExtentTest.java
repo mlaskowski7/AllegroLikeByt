@@ -49,6 +49,7 @@ class UserExtentTest {
         List<User> loaded = User.getExtent();
         assertEquals(2, loaded.size());
         assertTrue(loaded.stream().anyMatch(u -> u.getUsername().equals("u1")));
+        assertTrue(loaded.stream().anyMatch(u -> u.getUsername().equals("u2")));
     }
 
     @Test

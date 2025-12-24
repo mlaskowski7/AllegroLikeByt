@@ -43,6 +43,7 @@ public abstract class User implements Serializable {
     public static void loadExtent() throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(EXTENT_FILE))) {
             extent = (List<User>) ois.readObject();
+            usercount = extent != null ? extent.size() : 0;
         }
     }
 

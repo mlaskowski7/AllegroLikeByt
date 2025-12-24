@@ -14,6 +14,7 @@ class AssociationTest {
     private void clearExtents() throws Exception {
         clearExtent(Order.class, "extent");
         clearExtent(User.class, "extent");
+        clearExtent(User.class, "usercount");
         clearExtent(OrderItem.class, "extent");
         clearExtent(CartItem.class, "extent");
         clearExtent(ShoppingCart.class, "extent");
@@ -25,7 +26,7 @@ class AssociationTest {
         Object value = field.get(null);
         if (value instanceof List<?> list) {
             list.clear();
-        } else if (value instanceof Integer) {
+        } else if (field.getType() == int.class) {
             field.set(null, 0);
         }
     }
