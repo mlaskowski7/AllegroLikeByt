@@ -29,17 +29,14 @@ public class RegularUser extends User {
     }
 
     public void addFunds(double amount) {
-        // Implementation stub
         System.out.println("Funds added: " + amount);
     }
 
     public void purchasePlan(String planName) {
-        // Implementation stub
         System.out.println("Plan purchased: " + planName);
     }
 
     public void reviewProduct(Product product, String review) {
-        // Implementation stub
         System.out.println("Product reviewed: " + product + " with review: " + review);
     }
 }
