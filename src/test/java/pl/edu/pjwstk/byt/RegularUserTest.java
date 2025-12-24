@@ -20,12 +20,17 @@ class RegularUserTest {
     @Test
     void shouldManageShippingAddresses() {
         RegularUser user = new RegularUser("jane_doe", "jane@example.com");
-        List<String> addresses = List.of("123 Main St", "456 Side St");
+        Address address1 = new Address("123 Main St", "Warsaw", "Poland", "00-001");
+        Address address2 = new Address("456 Side St", "Krakow", "Poland", "31-000");
 
-        user.setShippingAdresses(addresses);
+        user.addShippingAddress(address1);
+        user.addShippingAddress(address2);
 
-        assertEquals(2, user.getShippingAdresses().size());
-        assertTrue(user.getShippingAdresses().contains("123 Main St"));
+        assertEquals(2, user.getAddressList().size());
+        assertTrue(user.getAddressList().contains(address1));
+        assertTrue(user.getAddressList().contains(address2));
+        assertEquals(2, user.getShippingAddresses().size());
+        assertTrue(user.getShippingAddresses().contains("123 Main St, 00-001 Warsaw, Poland"));
     }
 
     @Test

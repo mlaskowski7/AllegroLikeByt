@@ -29,15 +29,31 @@ public class DataAnalyst extends User implements Idataanalyst {
         return reportList;
     }
 
-    public void addtoReportList(Report report) {
+    public void addToReportList(Report report) {
         this.reportList.add(report);
         reportsGenerated++;
-
     }
-    public void delfromReportList(Report report) {
+
+    /**
+     * @deprecated Use {@link #addToReportList(Report)} instead.
+     */
+    @Deprecated
+    public void addtoReportList(Report report) {
+        addToReportList(report);
+    }
+
+    public void deleteFromReportList(Report report) {
         if (this.reportList.remove(report)) {
             reportsGenerated--;
         }
+    }
+
+    /**
+     * @deprecated Use {@link #deleteFromReportList(Report)} instead.
+     */
+    @Deprecated
+    public void delfromReportList(Report report) {
+        deleteFromReportList(report);
     }
 
 

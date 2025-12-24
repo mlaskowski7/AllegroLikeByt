@@ -18,7 +18,7 @@ public class Order implements Serializable {
     // Composition: Order (Whole) <-> OrderItem (Part)
     private List<OrderItem> items;
 
-    // Basic Association: Customer (1) <-> Order (*)
+    // Basic Association: RegularUser (1) <-> Order (*)
     private RegularUser customer;
 
     public Order(RegularUser customer, Product initialProduct, int initialQuantity) {
@@ -45,7 +45,7 @@ public class Order implements Serializable {
     }
 
     // ------------------------------------------------------------------------
-    // Basic Association: Customer
+    // Basic Association: RegularUser
     // ------------------------------------------------------------------------
 
     public RegularUser getCustomer() {
@@ -75,7 +75,7 @@ public class Order implements Serializable {
     /**
      * Internal method to set the customer without triggering the reverse
      * association.
-     * Should only be called from Customer.addOrderInternal.
+     * Should only be called from RegularUser.addOrderInternal.
      */
     protected void setCustomerInternal(RegularUser customer) {
         this.customer = customer;
