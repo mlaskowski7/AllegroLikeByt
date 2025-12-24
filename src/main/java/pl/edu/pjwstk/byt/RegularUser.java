@@ -34,13 +34,13 @@ public class RegularUser extends User {
         shippingAdresses.remove(adress);
     }
 
-    public List<Adress> getShippingAdresses() {
+    public List<Adress> getAdressList() {
         return new ArrayList<>(shippingAdresses);
     }
 
     // ----------------------
-// Order Methods (with bidirectional linking)
-// ----------------------
+    // Order Methods (with bidirectional linking)
+    // ----------------------
     public void addOrder(Order order) {
         if (order != null && !orders.contains(order)) {
             orders.add(order);
@@ -67,7 +67,6 @@ public class RegularUser extends User {
         }
     }
 
-
     public List<Order> getOrders() {
         return new ArrayList<>(orders);
     }
@@ -80,22 +79,24 @@ public class RegularUser extends User {
         shoppingCart.clearCart();
     }
 
-    private ShoppingCart shoppingCart;
-
-    public ShoppingCart getShoppingCart() {
-        return shoppingCart;
-    }
-
     public void setShoppingCart(ShoppingCart shoppingCart) {
         this.shoppingCart = shoppingCart;
     }
 
     public List<String> getShippingAdresses() {
-        return shippingAdresses;
+        List<String> addresses = new ArrayList<>();
+        for (Adress addr : shippingAdresses) {
+            addresses.add(addr.getStreet());
+        }
+        return addresses;
     }
 
-    public void setShippingAdresses(List<String> shippingAdresses) {
-        this.shippingAdresses = shippingAdresses;
+    public void setShippingAdresses(List<String> addresses) {
+        this.shippingAdresses.clear();
+        for (String addr : addresses) {
+            // Dummy conversion as implementation detail
+            this.shippingAdresses.add(new Adress(addr, "Unknown", "Unknown", "00-000"));
+        }
     }
 
     public void addFunds(double amount) {
