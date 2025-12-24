@@ -62,7 +62,9 @@ public class RegularUser extends User {
         if (order != null && orders.contains(order)) {
             orders.remove(order);
             if (order.getCustomer() == this) {
-                order.setCustomer(null);
+                // Since Order requires a Customer (multiplicity 1), removing it from Customer
+                // implies the Order execution (lifecycle) is over or it's being deleted.
+                order.delete();
             }
         }
     }

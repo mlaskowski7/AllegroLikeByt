@@ -13,7 +13,7 @@ class AssociationTest {
 
     private void clearExtents() throws Exception {
         clearExtent(Order.class, "extent");
-        clearExtent(RegularUser.class, "usercount"); // no extent but just in case
+        clearExtent(User.class, "extent");
         clearExtent(OrderItem.class, "extent");
         clearExtent(CartItem.class, "extent");
         clearExtent(ShoppingCart.class, "extent");
