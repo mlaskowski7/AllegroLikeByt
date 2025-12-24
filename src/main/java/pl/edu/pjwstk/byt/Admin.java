@@ -7,10 +7,25 @@ public class Admin extends User {
 
     }
 
-    public int getUserCount(){
+    public int getUserCount() {
         return User.usercount;
     }
-    public void accessDashboard(){
 
+    public void accessDashboard() {
+        System.out.println("Accessing dashboard...");
+    }
+
+    public void grantAccess(User user) {
+        if (user != null) {
+            user.setActive(true);
+            System.out.println("Access granted to user: " + user.getUsername());
+        }
+    }
+
+    public void revokeAccess(User user) {
+        if (user != null) {
+            user.setActive(false);
+            System.out.println("Access revoked for user: " + user.getUsername());
+        }
     }
 }

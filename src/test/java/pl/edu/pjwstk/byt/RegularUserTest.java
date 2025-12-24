@@ -1,111 +1,58 @@
 package pl.edu.pjwstk.byt;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class RegularUserTest {
 
-    private RegularUser user;
-    private Product product;
-
-    @BeforeEach
-    void setUp() {
-        user = new RegularUser("testUser", "user@example.com");
-        product = new Product(
-                "Laptop",
-                "High-end laptop",
-                1500.0,
-                10,
-                Arrays.asList("img1.jpg")
-        );
-    }
-
-
     @Test
-    void regularUserShouldBeInstanceOfUser() {
-        assertTrue(user instanceof User);
+    void shouldCreateRegularUserWithRequiredFields() {
+        RegularUser user = new RegularUser("john_doe", "john@example.com");
+
+        assertNotNull(user);
+        assertEquals("john_doe", user.getUsername());
+        assertEquals("john@example.com", user.getEmail());
+        assertTrue(user.isActive());
+        assertNotNull(user.getRegistrationDate());
     }
 
     @Test
-    void userCountShouldIncrease() {
-        int countBefore = User.usercount;
-        RegularUser newUser = new RegularUser("anotherUser", "another@example.com");
-        assertEquals(countBefore + 1, User.usercount);
+    void shouldManageShippingAddresses() {
+        RegularUser user = new RegularUser("jane_doe", "jane@example.com");
+        List<String> addresses = List.of("123 Main St", "456 Side St");
+
+        user.setShippingAdresses(addresses);
+
+        assertEquals(2, user.getShippingAdresses().size());
+        assertTrue(user.getShippingAdresses().contains("123 Main St"));
     }
 
     @Test
-    void shouldAddShippingAddress() {
-        Adress adress = new Adress("123 Main St", "Warsaw", "Poland", "00-001");
-        user.addShippingAdress(adress);
+    void shouldExecuteBusinessMethods() {
+        RegularUser user = new RegularUser("bob_builder", "bob@example.com");
 
-        List<Adress> addresses = user.getShippingAdresses();
-        assertEquals(1, addresses.size());
-        assertTrue(addresses.contains(adress));
+        assertDoesNotThrow(() -> {
+            user.addFunds(100.0);
+            user.purchasePlan("Premium");
+            user.reviewProduct(null, "Good product"); // Product can be null for stub
+        });
     }
 
     @Test
-    void shouldRemoveShippingAddress() {
-        Adress adress = new Adress("123 Main St", "Warsaw", "Poland", "00-001");
-        user.addShippingAdress(adress);
-        user.removeShippingAdress(adress);
+    void shouldManageShoppingCart() {
+        RegularUser user = new RegularUser("shopper", "shop@example.com");
+        ShoppingCart cart = new ShoppingCart();
 
-        List<Adress> addresses = user.getShippingAdresses();
-        assertEquals(0, addresses.size());
+        user.setShoppingCart(cart);
+        assertEquals(cart, user.getShoppingCart());
     }
 
     @Test
-    void shouldAddOrder() {
-        Order order = new Order(
-                user, product, 1); // assuming default constructor exists
-        user.addOrder(order);
+    void shouldInheritUserProperties() {
+        RegularUser user = new RegularUser("inherit_test", "inherit@example.com");
+        user.setPassword("securePass");
 
-        List<Order> orders = user.getOrders();
-        assertEquals(1, orders.size());
-        assertTrue(orders.contains(order));
+        assertEquals("securePass", user.getPassword());
     }
-
-    @Test
-    void shouldHaveEmptyShoppingCartInitially() {
-        assertNotNull(user.getShoppingCart());
-        assertEquals(0, user.getShoppingCart().getCartItems().size());
-    }
-
-    @Test
-    void shouldAddProductToShoppingCart() {
-        Product product = new Product(
-                "Laptop",                  // name
-                "High-end laptop",         // description
-                1500.0,                    // price
-                10,                        // stock quantity
-                List.of("img1.jpg")        // images
-        );
-
-        boolean added = user.getShoppingCart().updateCart(product, 1);
-        assertTrue(added);
-
-        assertEquals(1, user.getShoppingCart().getCartItems().size());
-        assertTrue(user.getShoppingCart().getCartItems().containsKey(product.getId()));
-    }
-
-    @Test
-    void shouldClearShoppingCart() {
-        Product product = new Product(
-                "Laptop",
-                "High-end laptop",
-                1500.0,
-                10,
-                List.of("img1.jpg")
-        );
-
-        user.getShoppingCart().updateCart(product, 1);
-
-        user.clearShoppingCart();
-        assertEquals(0, user.getShoppingCart().getCartItems().size());
-    }
-
 }

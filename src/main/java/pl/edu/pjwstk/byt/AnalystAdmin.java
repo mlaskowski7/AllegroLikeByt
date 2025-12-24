@@ -1,6 +1,5 @@
 package pl.edu.pjwstk.byt;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +12,7 @@ public class AnalystAdmin extends Admin implements Idataanalyst {
         reportsGenerated = 0;
         reportList = new ArrayList<Report>();
     }
+
     public List<Report> getReportList() {
         return reportList;
     }
@@ -21,6 +21,7 @@ public class AnalystAdmin extends Admin implements Idataanalyst {
         this.reportList.add(report);
         reportsGenerated++;
     }
+
     public void delfromReportList(Report report) {
         this.reportList.remove(report);
         reportsGenerated--;
@@ -28,5 +29,20 @@ public class AnalystAdmin extends Admin implements Idataanalyst {
 
     public int getReportsGenerated() {
         return reportsGenerated;
+    }
+
+    public void generateReport(String content) {
+        Report report = new Report();
+
+        addtoReportList(report);
+        System.out.println("Report generated: " + content);
+    }
+
+    public void analyzeSales() {
+        System.out.println("Analyzing sales data...");
+    }
+
+    public void viewStatistics() {
+        System.out.println("Viewing statistics...");
     }
 }
