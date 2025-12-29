@@ -18,10 +18,10 @@ public class Order implements Serializable {
     // Composition: Order (Whole) <-> OrderItem (Part)
     private List<OrderItem> items;
 
-    // Basic Association: Customer (1) <-> Order (*)
-    private Customer customer;
+    // Basic Association: RegularUser (1) <-> Order (*)
+    private RegularUser customer;
 
-    public Order(Customer customer, Product initialProduct, int initialQuantity) {
+    public Order(RegularUser customer, Product initialProduct, int initialQuantity) {
         if (customer == null)
             throw new IllegalArgumentException("Order must have a customer");
         if (initialProduct == null)
@@ -45,14 +45,14 @@ public class Order implements Serializable {
     }
 
     // ------------------------------------------------------------------------
-    // Basic Association: Customer
+    // Basic Association: RegularUser
     // ------------------------------------------------------------------------
 
-    public Customer getCustomer() {
+    public RegularUser getCustomer() {
         return customer;
     }
 
-    public void setCustomer(Customer customer) {
+    public void setCustomer(RegularUser customer) {
         if (customer == null) {
             throw new IllegalArgumentException("Order must have a customer (multiplicity 1)");
         }
@@ -60,7 +60,7 @@ public class Order implements Serializable {
             return;
         }
 
-        Customer oldCustomer = this.customer;
+        RegularUser oldCustomer = this.customer;
         this.customer = null; // Decouple
 
         if (oldCustomer != null) {
@@ -75,9 +75,9 @@ public class Order implements Serializable {
     /**
      * Internal method to set the customer without triggering the reverse
      * association.
-     * Should only be called from Customer.addOrderInternal.
+     * Should only be called from RegularUser.addOrderInternal.
      */
-    protected void setCustomerInternal(Customer customer) {
+    protected void setCustomerInternal(RegularUser customer) {
         this.customer = customer;
     }
     // We remove 'removeCustomer' public method because multiplicity is 1.
@@ -177,7 +177,7 @@ public class Order implements Serializable {
 
         // Unlink customer
         if (this.customer != null) {
-            Customer c = this.customer;
+            RegularUser c = this.customer;
             this.customer = null;
             c.removeOrder(this);
         }

@@ -1,7 +1,6 @@
 package pl.edu.pjwstk.byt;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -131,14 +130,14 @@ public class ExtentPersistenceExample {
 
         // Create orders
         System.out.println("Creating orders...");
-        var customer = new Customer("Demo User", "demo@example.com");
+        var user = new RegularUser("Demo User", "demo@example.com");
 
-        var order1 = new Order(customer, product1, 1);
+        var order1 = new Order(user, product1, 1);
         // product1 already added in constructor
         order1.addItem(product2);
         order1.calculateTotal();
 
-        var order2 = new Order(customer, product1, 1);
+        var order2 = new Order(user, product1, 1);
         order2.changeOrderStatus(OrderStatus.COMPLETE);
         order2.calculateTotal();
 
@@ -149,30 +148,21 @@ public class ExtentPersistenceExample {
         extent.forEach(o -> System.out.println("  - Order (Status: " + o.getStatus() + ", Total: " + o.getTotalAmount()
                 + ", Items: " + o.getItems().size() + ")"));
 
-        System.out.println("Original Order Total: " + order1.getTotalAmount()); // 2*25.0 + 1*100.0 = 150.0
+        System.out.println("Original Order Total: " + order1.getTotalAmount());
 
-        // 6. Save Extents
+        // Save extents
         try {
             System.out.println("Saving extents...");
             Product.saveExtent();
             Category.saveExtent();
-            Customer.saveExtent();
             Order.saveExtent();
-            // OrderItem.saveExtent(); // Usually handled? Explicitly for safety
             OrderItem.saveExtent();
             System.out.println("Extents saved successfully!");
 
-            // 7. Clear memory (Simulate restart)
-            System.out.println("Clearing memory...");
-            // Not easily possible to clear static lists without methods or reflection here.
-            // But we can reload into new process logic or just inspect files.
-            // For this example, let's just Load back and see if counts match.
-
-            // 8. Load Extents
+            // Load extents
             System.out.println("Loading extents...");
             Product.loadExtent();
             Category.loadExtent();
-            Customer.loadExtent();
             OrderItem.loadExtent();
             Order.loadExtent();
 

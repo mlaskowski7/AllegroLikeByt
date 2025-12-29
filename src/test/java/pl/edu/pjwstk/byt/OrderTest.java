@@ -1,32 +1,34 @@
 package pl.edu.pjwstk.byt;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.time.LocalDateTime;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OrderTest {
 
-    private Customer customer;
+    private RegularUser user;
     private Product product;
 
-    @org.junit.jupiter.api.BeforeEach
+    @BeforeEach
     void setUp() throws Exception {
-        clearExtent(Customer.class);
+        clearExtent(Order.class);
         clearExtent(Product.class);
-        customer = new Customer("Test", "test@test.com");
-        product = new Product("P", "D", 10, 10, java.util.List.of("img"));
+        user = new RegularUser("TestUser", "test@test.com");
+        product = new Product("P", "D", 10, 10, List.of("img"));
     }
 
     private void clearExtent(Class<?> clazz) throws Exception {
-        java.lang.reflect.Field field = clazz.getDeclaredField("extent");
+        var field = clazz.getDeclaredField("extent");
         field.setAccessible(true);
-        ((java.util.List<?>) field.get(null)).clear();
+        ((List<?>) field.get(null)).clear();
     }
 
     // Complex attribute (orderDate) TESTS
     @Test
     void shouldCreateOrderWithValidDate() {
-        var order = new Order(customer, product, 1);
+        var order = new Order(user, product, 1);
         assertNotNull(order);
     }
 
@@ -37,13 +39,18 @@ public class OrderTest {
 
     @Test
     void shouldThrowExceptionWhenInitialProductIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> new Order(customer, null, 1));
+        assertThrows(IllegalArgumentException.class, () -> new Order(user, null, 1));
     }
 
     @Test
     void shouldSetStatusCorrectlyOnCreation() {
-        // Status is pending by default in new constructor
-        var order = new Order(customer, product, 1);
+        var order = new Order(user, product, 1);
         assertEquals(OrderStatus.PAYMENT_PENDING, order.getStatus());
+    }
+
+    @Test
+    void shouldLinkOrderToUser() {
+        var order = new Order(user, product, 1);
+        assertTrue(user.getOrders().contains(order));
     }
 }
